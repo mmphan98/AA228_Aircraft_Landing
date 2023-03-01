@@ -29,6 +29,7 @@ function update!(model::Airplane, th', power', dt)
     th = th'
 
     # Calculate new V_air
+    
 
     # Calculate new V_vert
 
