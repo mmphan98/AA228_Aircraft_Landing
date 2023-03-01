@@ -30,7 +30,6 @@ function update!(model::Airplane, th', power', dt)
 
     # Calculate new V_air
     
-
     # Calculate new V_vert
 
     # Calculate new AOD
