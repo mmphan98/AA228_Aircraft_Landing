@@ -8,6 +8,7 @@ mutable struct Airplane
     power   # throttle setting [0, 10]
 
     V_air   # airspeed (m/s)
+    V_vert  # vertical airspeed
     AOD     # angle of descent from runway (rad), horizontal is 0
 end
 
@@ -28,10 +29,11 @@ function update!(model::Airplane, th', power', dt)
     th = th'
 
     # Calculate new V_air
-    V_air += power / (Cd * th)
+
+    # Calculate new V_vert
 
     # Calculate new AOD
-    AOD = (weight - (Cl * V_air)) + th
+    AOD = asin(-V_vert/V_air)
 
     return model
 end
