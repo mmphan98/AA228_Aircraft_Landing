@@ -1,5 +1,4 @@
 using Printf
-
 include("simulator.jl")
 
 """ 
