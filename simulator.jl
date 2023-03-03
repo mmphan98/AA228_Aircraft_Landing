@@ -44,55 +44,55 @@ function update_Airplane!(model::Airplane, th_p, power_p, dt)
 
     # Updating power
     if (power_p > power_max)
-        power = power_max
+        model.power = power_max
     elseif (power_p < power_min)
-        power = power_min
+        model.power = power_min
     else
-        power = power_p
+        model.power = power_p
     end
 
     # Updating angle of path
     if (th_p > th_max)
-        th = th_max
+        model.th = th_max
     elseif (th_p < th_min)
-        th = th_min
+        model.th = th_min
     else
-        th = th_p
+        model.th = th_p
     end
 
     # Sum of forces
     lift = Lcoeff(th + AOI) * roh * V_air^2 * A / 2
     drag = Dcoeff(th + AOI) * roh * V_air^2 * A / 2
     Fx = (power * cos(th)) - (lift * sin(th + AOI)) - (drag * cos(th + AOI))
-    Fy = (-m * g) + (lift * cos(th + AOI)) - (drag * sin(th + AOI))
+    Fy = (-m * g) + (power * sin(th)) + (lift * cos(th + AOI)) - (drag * sin(th + AOI))
 
     # Calculate new V_air
     Vx = (V_air * cos(alpha)) + (Fx / m)*dt
     Vy = (V_air * sin(alpha)) + (Fy / m)*dt
-    V_air = sqrt(Vx^2 + Vy^2)
+    model.V_air = sqrt(Vx^2 + Vy^2)
     
     # Calculate new V_vert
-    V_vert = Vy
+    model.V_vert = Vy
 
     # Calculate new alpha, angle of flight path
-    alpha = asin(V_vert/V_air)
+    model.alpha = asin(V_vert/V_air)
 
     # Calculate new position
-    x += Vx * cos(alpha)
-    y += Vy * sin(alpha)
+    model.x += Vx * cos(alpha) * dt
+    model.y += Vy * sin(alpha) * dt
 
     return model
 end
 
 """
-Defining a function to calculate the drag coefficient, given pitch.
+Defining a function to calculate the drag coefficient, given pitch. Exponential fit
 """
 function Dcoeff(th)
     return 0.0178*exp(0.139*th)
 end
 
 """
-Defining a function to calculate the lift coefficient, given pitch.
+Defining a function to calculate the lift coefficient, given pitch. Polynomial fit of degree 6
 """
 function Lcoeff(th)
     return 0.136*(th) - 0.0413*(th^2) + 0.01*(th^3) - 1.01*(10^-3)*(th^4) + 4.59*(10^-5)*(th^5) - 7.69*(10^-6)*(th^6)
