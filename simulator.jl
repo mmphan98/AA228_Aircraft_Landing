@@ -78,8 +78,8 @@ function update_Airplane!(model::Airplane, th_p, power_p, dt)
     model.alpha = asin(V_vert/V_air)
 
     # Calculate new position
-    model.x += Vx * cos(alpha) * dt
-    model.y += Vy * sin(alpha) * dt
+    model.x += Vx * abs(cos(alpha)) * dt
+    model.y += Vy * abs(sin(alpha)) * dt
 
     return model
 end
