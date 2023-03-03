@@ -1,4 +1,22 @@
 """
+This simulator.jl file builds a dynamics model for a Cessna 172 airplane, with a mutable struct,
+and update! function, that will change the struct given new power and pitch settings.
+"""
+
+#Fundamental Constants
+const roh = 1.225       # density of air, STP, kg/m^3
+const g = 9.81          # gravity, m/s^2
+
+#Plane Constants
+const m = 1157          # mass of airplane (kg)
+const A = 16.17         # wing area (m^2)
+const th_max = 0.1745   # max pitch (rad), 20 degrees
+const th_min = -0.1745  # max pitch (rad), -20 degrees
+const power_max = 200   # max power, thrust ranges from [20, 200] N
+const power_min = 20    # min power, thrust ranges from [20, 200] N
+const AOI = 0.0131      # angle of incidence (wing angle of attack, offset from pitch), 1.5 degrees
+
+"""
 Defining a struct for an airplane object
 """
 mutable struct Airplane
@@ -7,7 +25,7 @@ mutable struct Airplane
     x::Float64       # distance of airplane from runway (m)
     y::Float64       # altitude of airplane from the runway (m)
     th::Float64      # pitch of the airplane (rad), horizontal is 0
-    power::Float64   # power setting, thrust ranges from [20, 200] kg? N?
+    power::Float64   # power setting
 
     #Flight Dynamics
     V_air::Float64   # airspeed (m/s)
@@ -19,25 +37,28 @@ end
 """
 Defining a dynamics model via a function that updates the Airplane model
 """
-function update!(model::Airplane, th', power', dt)
-
-    #Fundamental Constants
-    const roh = 1.225       # density of air, STP, kg/m^3
-    const g = 9.81          # gravity, m/s^2
-    
-    #Plane Constants
-    const m = 1157          # mass of airplane (kg)
-    const A = 16.17         # wing area (m^2)
-    const th_max = 0.1745   # max pitch (rad), 20 degrees
-    const th_min = -0.1745  # max pitch (rad), -20 degrees
-    const AOI = 0.0131      # angle of incidence (wing angle of attack, offset from pitch), 1.5 degrees
+function update_Airplane!(model::Airplane, th_p, power_p, dt)
 
     # Access existing airplane values from previous step
-    th, power, V_air, V_vert, alpha = model.th, model.power, model.V_air, model.V_vert, model.alpha
+    x, y, th, power, V_air, V_vert, alpha = model.x, model.y, model.th, model.power, model.V_air, model.V_vert, model.alpha
 
-    # Updating values
-    power = power'
-    th = th'
+    # Updating power
+    if (power_p > power_max)
+        power = power_max
+    elseif (power_p < power_min)
+        power = power_min
+    else
+        power = power_p
+    end
+
+    # Updating angle of path
+    if (th_p > th_max)
+        th = th_max
+    elseif (th_p < th_min)
+        th = th_min
+    else
+        th = th_p
+    end
 
     # Sum of forces
     lift = Lcoeff(th + AOI) * roh * V_air^2 * A / 2
@@ -55,6 +76,10 @@ function update!(model::Airplane, th', power', dt)
 
     # Calculate new alpha, angle of flight path
     alpha = asin(V_vert/V_air)
+
+    # Calculate new position
+    x += Vx * cos(alpha)
+    y += Vy * sin(alpha)
 
     return model
 end
