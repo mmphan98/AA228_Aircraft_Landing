@@ -1,5 +1,14 @@
 using Printf
+using POMDPs
 include("simulator.jl")
+
+
+# Epsilon Greedy
+
+# QLearning
+
+
+
 
 """ 
 Airplane Model
@@ -15,11 +24,4 @@ alpha::Float64   # angle of path (rad), horizontal is 0
 """
 #               x     y    th     power V_air V_vert alpha
 C172 = Airplane(-4500, 600, 0.075, 150, 40, -2.5, -0.0525)
-
-print(C172)
-@printf("\n")
-
 update_Airplane!(C172, 0.1, 100, 1)
-
-print(C172)
-@printf("\n")
