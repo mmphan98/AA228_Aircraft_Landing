@@ -76,14 +76,22 @@ const V_air_step = 1
 
 const alpha_min = -0.08
 const alpha_max = 0
+const alpha_step = 0.01
 
-x = collect(1:46)
-y = collect(1:21)
+# Building the state space
+x = collect(1:((x_max - x_min)/x_step) + 1)
+y = collect(1:((y_max - y_min)/y_step) + 1)
+V_air = collect(1:((V_air_max - V_air_min)/V_air_step) + 1)
+alpha = collect(1:((alpha_max - alpha_min)/alpha_step) + 1)
+
+S = reshape(1:(length(x)*length(y)*length(V_air)*length(alpha)), length(x), length(y), length(V_air), length(alpha))
+
+@printf("\n State Variable: %f", S[1,1,1,1])
 
 """
 Definition of action space
     6 possible actions
     pitch up, same, down
     throttle up, same, down
-    Total size of action space A = 6
+    Total size of action space A = 9
 """
