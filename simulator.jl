@@ -18,6 +18,7 @@ const th_min = -0.1745  # max pitch (rad), -20 degrees
 const power_max = 200   # max power, thrust ranges from [20, 200] N
 const power_min = 20    # min power, thrust ranges from [20, 200] N
 const AOI = 0.0131      # angle of incidence (wing angle of attack, offset from pitch), 1.5 degrees
+const stall_speed = 25  # stall speed of airplane
 
 #Noise Parameters
 const wind_speed = Normal(0,2)

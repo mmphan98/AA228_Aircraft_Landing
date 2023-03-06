@@ -19,7 +19,7 @@ const y_min = 0
 const y_step = 30
 
 const V_air_max = 60
-const V_air_min = 25
+const V_air_min = stall_speed
 const V_air_step = 1
 
 const alpha_min = -0.08
