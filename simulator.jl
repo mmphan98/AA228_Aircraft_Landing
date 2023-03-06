@@ -12,7 +12,7 @@ const g = 9.81          # gravity, m/s^2
 
 #Plane Constants
 const m = 1000          # mass of airplane (kg)
-const A = 16.17         # wing area (m^2)
+const A_wing = 16.17         # wing area (m^2)
 const th_max = 0.1745   # max pitch (rad), 20 degrees
 const th_min = -0.1745  # max pitch (rad), -20 degrees
 const power_max = 200   # max power, thrust ranges from [20, 200] N
@@ -57,8 +57,8 @@ function update_Airplane!(model::Airplane, th_p, power_p)
     model.th = th_p
 
     # Sum of forces
-    lift = Lcoeff(th + AOI) * roh * V_air^2 * A / 2
-    drag = Dcoeff(th + AOI) * roh * V_air^2 * A / 2
+    lift = Lcoeff(th + AOI) * roh * V_air^2 * A_wing/ 2
+    drag = Dcoeff(th + AOI) * roh * V_air^2 * A_wing/ 2
     Fx = (power * g * cos(th)) - (lift * sin(th + AOI)) - (drag * cos(th + AOI))
     Fy = (-m * g) + (power * g * sin(th)) + (lift * cos(th + AOI)) - (drag * sin(th + AOI))
 
