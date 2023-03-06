@@ -11,14 +11,15 @@ const roh = 1.225       # density of air, STP, kg/m^3
 const g = 9.81          # gravity, m/s^2
 
 #Plane Constants
-const m = 1000          # mass of airplane (kg)
-const A_wing = 16.17         # wing area (m^2)
-const th_max = 0.1745   # max pitch (rad), 20 degrees
-const th_min = -0.1745  # max pitch (rad), -20 degrees
-const power_max = 200   # max power, thrust ranges from [20, 200] N
-const power_min = 20    # min power, thrust ranges from [20, 200] N
-const AOI = 0.0131      # angle of incidence (wing angle of attack, offset from pitch), 1.5 degrees
-const stall_speed = 25  # stall speed of airplane
+const m = 1000              # mass of airplane (kg)
+const A_wing = 16.17        # wing area (m^2)
+const th_max = 0.1745       # max pitch (rad), 20 degrees
+const th_min = -0.1745      # max pitch (rad), -20 degrees
+const power_max = 200       # max power, thrust ranges from [20, 200] N
+const power_min = 20        # min power, thrust ranges from [20, 200] N
+const AOI = 0.0131          # angle of incidence (wing angle of attack, offset from pitch), 1.5 degrees
+const stall_speed = 25      # stall speed of airplane
+const landing_speed = 33.4  # target landing speed
 
 #Noise Parameters
 const wind_speed = Normal(0,2)
@@ -94,5 +95,9 @@ Defining a function to calculate the lift coefficient, given pitch. Polynomial f
 """
 function Lcoeff(th)
     th*=180/pi
-    return 0.136*(th) - 0.0413*(th^2) + 0.01*(th^3) - 1.01*(10^-3)*(th^4) + 4.59*(10^-5)*(th^5) - 7.69*(10^-6)*(th^6)
+    return 0.335 + 0.0817*(th) - 2.32*(10^-4)*(th^2) + 3.13*(10^-4)*(th^3) - 1.91*(10^-5)*(th^4)
 end
+# function Lcoeff(th)
+#     th*=180/pi
+#     return 0.136*(th) - 0.0413*(th^2) + 0.01*(th^3) - 1.01*(10^-3)*(th^4) + 4.59*(10^-5)*(th^5) - 7.69*(10^-6)*(th^6)
+# end

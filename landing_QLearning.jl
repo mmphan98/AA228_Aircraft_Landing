@@ -41,8 +41,8 @@ Airplane Model
     alpha::Float64   # angle of path (rad), horizontal is 0
 """
 #               x     y    th     power V_air alpha
-C172 = Airplane(-4500, 600, 0.075, 150, 40, -0.0525)
-update_Airplane!(C172, 0.1, 100) 
+C172 = Airplane(-4500, 600, 0.05, 150, 40, -0.0525)
+update_Airplane!(C172, 0.00, 150) 
 print(C172)
 print(C172.V_air*cos(C172.alpha))
 print(C172.V_air*sin(C172.alpha))
