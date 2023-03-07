@@ -20,12 +20,13 @@ const power_min = 20        # min power, thrust ranges from [20, 200] N
 const AOI = 0.0131          # angle of incidence (wing angle of attack, offset from pitch), 1.5 degrees
 const stall_speed = 25      # stall speed of airplane
 const landing_speed = 33.4  # target landing speed
+const landing_Vspeed_buffer = 2 # allowable variation in Vy on touchdown
 
 #Noise Parameters
 const wind_speed = Normal(0,2)
 
 #Model Constants
-const dt = 3            # time step for the dynamics model [s]
+const dt = 2            # time step for the dynamics model [s]
 
 """
 Defining a struct for an airplane object
@@ -73,7 +74,8 @@ function update_Airplane!(model::Airplane, th_p, power_p)
     model.V_air = sqrt(Vx^2 + Vy^2)
 
     # Calculate new alpha, angle of flight path
-    model.alpha = asin(Vy/V_air)
+    model.alpha = atan(Vy/Vx)
+    #model.alpha = asin(Vy/V_air)
 
     # Calculate new position
     model.x += Vx * abs(cos(alpha)) * dt

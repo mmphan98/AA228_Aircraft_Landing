@@ -5,8 +5,13 @@ landing_QLearning file
 
 using Printf
 using Random
+using CSV
+using DataFrames
 include("simulator.jl")
 include("state_action_space.jl")
+
+# FOR FILE EXPORT
+const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset.csv"
 
 """ 
 Reward Model
@@ -33,7 +38,7 @@ function calc_Reward(model::Airplane, action)
     end
 
     # Negative reward for stalling
-    if model.V_air < stall_speed
+    if model.V_air < stall_speed + V_air_step
         reward -= 100
     end
 
@@ -41,10 +46,10 @@ function calc_Reward(model::Airplane, action)
     if model.x > -x_step && model.y < y_step #at landing spot
         if model.V_air > landing_speed #overall airspeed is too fast
             reward -= 100 
-        elseif model.V_air*sin(model.alpha) > landing_speed buffer #verticle component of airspeed is too large
+        elseif abs(model.V_air*sin(model.alpha)) > landing_Vspeed_buffer #verticle component of airspeed is too large
             reward -= 100
         else
-            reward += 100 #successful landing
+            reward += 200 #successful landing
         end
     end
 
@@ -82,23 +87,23 @@ Is it is not valid, it will return false, meaning the simulation will terminate 
 function sim_valid(model::Airplane)
     # Position parameters
     if model.x > 0 || model.y > y_max || model.y < 0
-        @printf("Position out of bounds \n")
+        # @printf("Position out of bounds \n")
         return false
     # Airspeed parameters
     elseif model.V_air > V_air_max || model.V_air < V_air_min
-        @printf("Speed out of bounds \n")
+        # @printf("Speed out of bounds \n")
         return false
     # Pitch control parameters
     elseif model.th > th_max || model.th < th_min
-        @printf("Pitch out of bounds \n")
+        # @printf("Pitch out of bounds \n")
         return false
     # Power control parameters
     elseif model.power > power_max || model.power < power_min
-        @printf("Power out of bounds \n")
+        # @printf("Power out of bounds \n")
         return false
     # Flight Path angle
     elseif model.alpha > alpha_max || model.alpha < alpha_min
-        @printf("Path out of bounds \n")
+        # @printf("Path out of bounds \n")
         return false
     else
         return true
@@ -129,10 +134,11 @@ Airplane Model
 
 # Generating random data for QLearning
 dataset = Matrix{Int64}(undef, 0, 4)
-const iter = 50
+const iter = 10000
 
 for i in 1:iter
-    C172 = Airplane(-4500, 600, 0.05, 150, 40, -0.0525)
+    #C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
+    C172 = Airplane(rand(-4500:0), rand(0:300), rand(-1745:1745)/10000, rand(20:200), rand(25:60), rand(-13:7)/100)
     while (sim_valid(C172))
         # Find the current state space index
         S_idx = find_state_idx(C172)
@@ -140,8 +146,8 @@ for i in 1:iter
         rand_action = rand((1:9))
         
         # Print info
-        print(C172)
-        @printf(" Action %d \n", rand_action)
+        # print(C172)
+        # @printf(" Action %d \n", rand_action)
 
         # Initiate pitch and power variables
         th = copy(C172.th)
@@ -149,9 +155,9 @@ for i in 1:iter
 
         # Adjust pitch and power setting
         if rand_action == 1 || rand_action == 4 || rand_action == 7
-            th = C172.th + 0.004 #approx 0.25deg adjustments
+            th = C172.th + 0.005 #approx 0.25deg adjustments
         elseif rand_action == 3 || rand_action == 6 || rand_action == 9
-            th = C172.th - 0.004 #approx 0.25deg adjustments
+            th = C172.th - 0.005 #approx 0.25deg adjustments
         end
 
         if rand_action == 1 || rand_action == 2 || rand_action == 3
@@ -165,12 +171,16 @@ for i in 1:iter
 
         if (sim_valid(C172))
             R = calc_Reward(C172, rand_action)
-            @printf("Reward: %d \n", R)
+            # @printf("Reward: %d \n", R)
             new_state = find_state_idx(C172)
             new_data = [S_idx, rand_action, R, new_state]
             global dataset = [dataset; transpose(new_data)]
-        else
-            @printf("Simulation terminated \n")
+        # else
+        #     @printf("Simulation terminated \n")
         end
     end
 end
+
+# Write dataset to a CSV
+table = Tables.table(dataset)
+CSV.write(savepath, table)

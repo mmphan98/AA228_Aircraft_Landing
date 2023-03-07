@@ -4,11 +4,11 @@ include("simulator.jl")
 """
 Definition of state space
     x --> [-4500, 0] m, mapped to bins of 100m [1 ... 46]
-    y --> [0, 600] m, mapped to bins of 30m [1 ... 21] 
+    y --> [0, 300] m, mapped to bins of 30m [1 ... 11] 
     x,y --> mapped to [1 ... 1911]
 
     V_air --> [48, 120] knots, [25, 60] m/s mapped to bins of 1 m/s [1, 36]
-    alpha --> [-5, 5] deg, [-0.08, 0.02] rad mapped to bins of 0.01 rad [1, 11]
+    alpha --> [-7.5, 4] deg, [-0.13, 0.07] rad mapped to bins of 0.01 rad [1, 21]
 
     Total size of state space S = 382,536
 """
@@ -17,7 +17,7 @@ const x_max = 0
 const x_min = -4500
 const x_step = 100
 
-const y_max = 600
+const y_max = 300
 const y_min = 0
 const y_step = 30
 
@@ -25,8 +25,8 @@ const V_air_max = 60
 const V_air_min = stall_speed
 const V_air_step = 1
 
-const alpha_min = -0.08
-const alpha_max = 0.02
+const alpha_min = -0.13
+const alpha_max = 0.07
 const alpha_step = 0.01
 
 # Building the state space
