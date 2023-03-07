@@ -82,24 +82,15 @@ function BRes(Q, Q_prev)
     writePolicy(Q_new, outputpath)
 end
 
-""" 
-Airplane Model
-    #Attitude Characteristics
-    x::Float64       # distance of airplane from runway (m)
-    y::Float64       # altitude of airplane from the runway (m)
-    th::Float64      # pitch of the airplane (rad), horizontal is 0
-    power::Float64   # power setting
 
-    #Flight Dynamics
-    V_air::Float64   # airspeed (m/s)
-    alpha::Float64   # angle of path (rad), horizontal is 0
+
+
+
+
 """
-#               x     y    th     power V_air alpha
-# C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
-# update_Airplane!(C172, 0.00, 150) 
-# print(C172)
-
-inputfilename = "test_dataset.csv";
-outputfilename = "landing.policy";
+Run the Q-Learning algorithm to obtain the optimal policy
+"""
+inputfilename = "test_dataset1.csv";
+outputfilename = "landing1.policy";
 space = S
 @time compute(inputfilename, outputfilename, space)

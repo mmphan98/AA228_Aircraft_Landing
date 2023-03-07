@@ -11,7 +11,7 @@ include("simulator.jl")
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset.csv"
+const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset1.csv"
 
 """ 
 Reward Model
@@ -134,11 +134,22 @@ Airplane Model
 
 # Generating random data for QLearning
 dataset = Matrix{Int64}(undef, 0, 4)
-const iter = 10000
+const iter = 100000
 
 for i in 1:iter
     #C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
-    C172 = Airplane(rand(-4500:0), rand(0:300), rand(-1745:1745)/10000, rand(20:200), rand(25:60), rand(-13:7)/100)
+    # C172 = Airplane(rand(-4500:0), rand(0:300), rand(-1745:1745)/10000, rand(20:200), rand(25:60), rand(-13:7)/100)
+
+    if i % 10 == 1
+        global x_rand = rand(-4500:0)
+        global y_rand = rand(0:300)
+        global th_rand = rand(-1745:1745)/10000
+        global power_rand = rand(20:200)
+        global V_rand = rand(25:60)
+        global alpha_rand = rand(-13:7)/100
+    end
+    C172 = Airplane(x_rand, y_rand, th_rand, power_rand, V_rand, alpha_rand)
+
     while (sim_valid(C172))
         # Find the current state space index
         S_idx = find_state_idx(C172)
