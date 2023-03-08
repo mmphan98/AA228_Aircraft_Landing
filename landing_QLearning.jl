@@ -14,7 +14,11 @@ include("state_action_space.jl")
 function writePolicy(Q, path)
     open(path, "w") do io
         for row in 1:size(Q, 1)
-            @printf(io, "%d\n", findmax(Q[row,:])[2])
+            if findmax(Q[row,:])[1] == 0
+                @printf(io, "%d\n", 5)
+            else
+                @printf(io, "%d\n", findmax(Q[row,:])[2])
+            end
         end
     end
 end
@@ -41,15 +45,15 @@ function BRes(Q, Q_prev)
  end
 
  # Defining the function for Q-Learning
- function compute(infile, outfile, space)
+ function compute(infile, outfile, space, epsilon)
     
     inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\"
     outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
-    inputpath = string(inprefix, inputfilename)
-    outputpath = string(outprefix, outputfilename)
+    inputpath = string(inprefix, infile)
+    outputpath = string(outprefix, outfile)
     
     # Read in CSV file
-    df = CSV.read(inputpath, DataFrame)
+    df = CSV.read(inputpath, DataFrame; header = true)
     
     # Define the Q-Learning Model
     C172Model_S = collect(1:length(space))
@@ -86,11 +90,23 @@ end
 
 
 
+"""
+UNCOMMENT TO CREATE NEW DATASET
+"""
+
+# # Compute dataset
+# dataset = Matrix{Int64}(undef, 0, 4)
+# dataset = explore_dataset(dataset)
+
+# # Write dataset to a CSV
+# table = Tables.table(dataset)
+# CSV.write(savepath, table)
 
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset4.csv";
-outputfilename = "landing4.policy";
+inputfilename = "test_dataset6.csv";
+outputfilename = "landing6.policy";
 space = S
-@time compute(inputfilename, outputfilename, space)
+epsilon = 0.8 #for epsilon greedy
+@time compute(inputfilename, outputfilename, space, epsilon)

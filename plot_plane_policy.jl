@@ -17,55 +17,48 @@ function plot_policy(inputfilename, outputfilename)
     inputpath = string(inprefix, inputfilename)
     outputpath = string(outprefix, outputfilename)
 
-    policy = CSV.read(inputpath, DataFrame; header=false)
+    policy = CSV.read(inputpath, DataFrame; header = false)
 
     C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
-    x = Vector{Float64}()
-    y = Vector{Float64}()
-    th = Vector{Float64}()
-    p = Vector{Float64}()
-    v = Vector{Float64}()
-    al = Vector{Float64}()
-
+    plot_x = Vector{Float64}()
+    plot_y = Vector{Float64}()
+    plot_th = Vector{Float64}()
+    plot_p = Vector{Float64}()
+    plot_v = Vector{Float64}()
+    plot_al = Vector{Float64}()
 
     while (sim_valid(C172))
-        push!(x, C172.x)
-        push!(y, C172.y)
-        push!(th, C172.th)
-        push!(p, C172.power)
-        push!(v, C172.V_air)
-        push!(al, C172.alpha)
+        push!(plot_x, C172.x)
+        push!(plot_y, C172.y)
+        push!(plot_th, C172.th)
+        push!(plot_p, C172.power)
+        push!(plot_v, C172.V_air)
+        push!(plot_al, C172.alpha)
 
         state_idx = find_state_idx(C172)
         action = policy[state_idx, 1]
-
-        # Adjust pitch and power setting
-        if action == 1 || action == 4 || action == 7
-            th = C172.th + 0.005 #approx 0.25deg adjustments
-        elseif action == 3 || action == 6 || action == 9
-            th = C172.th - 0.005 #approx 0.25deg adjustments
-        end
-
-        if action == 1 || action == 2 || action == 3
-            power = C172.power + 10
-        elseif action == 7 || action == 8 || action == 9
-            power = C172.power - 10
-        end
+        th, power = action_pitch_power_result(C172, action)
 
         #Update the airplane model
         update_Airplane!(C172, th, power)
-
     end
 
-    plot(x, y, seriestype=:scatter)
+    p1 = plot(plot_x, plot_y, title="x v. y", seriestype=:scatter)
+    p2 = plot(plot_x, plot_th, title="x v. th", seriestype=:scatter)
+    p3 = plot(plot_x, plot_p, title="x v. power", seriestype=:scatter)
+    p4 = plot(plot_x, plot_v, title="x v. velocity", seriestype=:scatter)
+    p5 = plot(plot_x, plot_al, title="x v. alpha", seriestype=:scatter)
+    p6 = plot(plot_th, plot_v, title="th v. velocity", seriestype=:scatter)
+    plot(p1, p2, p3, p4, p5, p6, layout=(3,3), legend=false)
     savefig(outputpath) 
 
 end
 
 """
+UNCOMMENT TO CREATE NEW PLOTS
+
 Run plotting
 """
-inputfilename = "landing4.policy";
-outputfilename = "testplot4.png";
+inputfilename = "landing6.policy";
+outputfilename = "testplot6.png";
 @time plot_policy(inputfilename, outputfilename)
-
