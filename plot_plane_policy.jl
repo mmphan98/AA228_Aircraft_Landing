@@ -11,26 +11,30 @@ include("state_action_space.jl")
 include("data_generation.jl")
 
 
-function plot_policy(inputfilename)
+function plot_policy(inputfilename, outputfilename)
     inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
+    outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\plots\\"
     inputpath = string(inprefix, inputfilename)
+    outputpath = string(outprefix, outputfilename)
 
     policy = CSV.read(inputpath, DataFrame; header=false)
 
     C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
-    x = []
-    y = []
-    v = []
-    th = []
-    al = []
+    x = Vector{Float64}()
+    y = Vector{Float64}()
+    th = Vector{Float64}()
+    p = Vector{Float64}()
+    v = Vector{Float64}()
+    al = Vector{Float64}()
 
 
     while (sim_valid(C172))
-        append!(x,C172.x)
-        append!(y,C172.y)
-        append!(th,C172.th)
-        append!(v,C172.V_air)
-        append!(al,C172.alpha)
+        push!(x,C172.x)
+        push!(y,C172.y)
+        push!(th,C172.th)
+        push!(p,C172.power)
+        push!(v,C172.V_air)
+        push!(al,C172.alpha)
 
         state_idx = find_state_idx(C172)
         action = policy[state_idx, 1]
@@ -54,6 +58,7 @@ function plot_policy(inputfilename)
     end
 
     plot(x,y)
+    savefig(outputpath) 
 
 end
 
@@ -61,15 +66,6 @@ end
 Run plotting
 """
 inputfilename = "landing4.policy";
-# @time plot_policy(inputfilename)
-
-
-inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
-inputpath = string(inprefix, inputfilename)
-
-policy = CSV.read(inputpath, DataFrame; header=false)
-
-C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
-state_idx = find_state_idx(C172)
-action = policy[state_idx, 1]
+outputfilename = "testplot4.png";
+@time plot_policy(inputfilename, outputfilename)
 
