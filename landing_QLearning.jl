@@ -90,7 +90,7 @@ end
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset1.csv";
-outputfilename = "landing1.policy";
+inputfilename = "test_dataset4.csv";
+outputfilename = "landing4.policy";
 space = S
 @time compute(inputfilename, outputfilename, space)

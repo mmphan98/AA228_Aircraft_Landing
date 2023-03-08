@@ -11,7 +11,7 @@ include("simulator.jl")
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset4.csv"
+const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset3.csv"
 
 """ 
 Reward Model
@@ -87,23 +87,23 @@ Is it is not valid, it will return false, meaning the simulation will terminate 
 function sim_valid(model::Airplane)
     # Position parameters
     if model.x > 0 || model.y > y_max || model.y < 0
-        # @printf("Position out of bounds \n")
+        @printf("Position out of bounds \n")
         return false
     # Airspeed parameters
     elseif model.V_air > V_air_max || model.V_air < V_air_min
-        # @printf("Speed out of bounds \n")
+        @printf("Speed out of bounds \n")
         return false
     # Pitch control parameters
     elseif model.th > th_max || model.th < th_min
-        # @printf("Pitch out of bounds \n")
+        @printf("Pitch out of bounds \n")
         return false
     # Power control parameters
     elseif model.power > power_max || model.power < power_min
-        # @printf("Power out of bounds \n")
+        @printf("Power out of bounds \n")
         return false
     # Flight Path angle
     elseif model.alpha > alpha_max || model.alpha < alpha_min
-        # @printf("Path out of bounds \n")
+        @printf("Path out of bounds \n")
         return false
     else
         return true
@@ -134,12 +134,10 @@ Airplane Model
 
 # Generating random data for QLearning
 dataset = Matrix{Int64}(undef, 0, 4)
-const iter = 500000
+const iter = 100
 
 for i in 1:iter
     #C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
-    # C172 = Airplane(rand(-4500:0), rand(0:300), rand(-1745:1745)/10000, rand(20:200), rand(25:60), rand(-13:7)/100)
-
     if i % 10 == 1
         global x_rand = rand(-4500:0)
         global y_rand = rand(0:300)
@@ -149,7 +147,7 @@ for i in 1:iter
         global alpha_rand = rand(-13:7)/100
     end
     C172 = Airplane(x_rand, y_rand, th_rand, power_rand, V_rand, alpha_rand)
-
+    
     while (sim_valid(C172))
         # Find the current state space index
         S_idx = find_state_idx(C172)
@@ -157,8 +155,8 @@ for i in 1:iter
         rand_action = rand((1:9))
         
         # Print info
-        # print(C172)
-        # @printf(" Action %d \n", rand_action)
+        print(C172)
+        @printf(" Action %d \n", rand_action)
 
         # Initiate pitch and power variables
         th = copy(C172.th)
@@ -182,12 +180,12 @@ for i in 1:iter
 
         if (sim_valid(C172))
             R = calc_Reward(C172, rand_action)
-            # @printf("Reward: %d \n", R)
+            @printf("Reward: %d \n", R)
             new_state = find_state_idx(C172)
             new_data = [S_idx, rand_action, R, new_state]
             global dataset = [dataset; transpose(new_data)]
-        # else
-        #     @printf("Simulation terminated \n")
+        else
+            @printf("Simulation terminated \n")
         end
     end
 end
