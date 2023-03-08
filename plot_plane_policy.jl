@@ -29,12 +29,12 @@ function plot_policy(inputfilename, outputfilename)
 
 
     while (sim_valid(C172))
-        push!(x,C172.x)
-        push!(y,C172.y)
-        push!(th,C172.th)
-        push!(p,C172.power)
-        push!(v,C172.V_air)
-        push!(al,C172.alpha)
+        push!(x, C172.x)
+        push!(y, C172.y)
+        push!(th, C172.th)
+        push!(p, C172.power)
+        push!(v, C172.V_air)
+        push!(al, C172.alpha)
 
         state_idx = find_state_idx(C172)
         action = policy[state_idx, 1]
@@ -57,7 +57,7 @@ function plot_policy(inputfilename, outputfilename)
 
     end
 
-    plot(x,y)
+    plot(x, y, seriestype=:scatter)
     savefig(outputpath) 
 
 end
