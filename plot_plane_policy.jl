@@ -59,6 +59,6 @@ UNCOMMENT TO CREATE NEW PLOTS
 
 Run plotting
 """
-inputfilename = "landing6.policy";
-outputfilename = "testplot6.png";
+inputfilename = "landing7.policy";
+outputfilename = "testplot7.png";
 @time plot_policy(inputfilename, outputfilename)

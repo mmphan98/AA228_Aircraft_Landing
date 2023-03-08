@@ -11,7 +11,7 @@ include("simulator.jl")
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset6.csv"
+const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset7.csv"
 
 """ 
 Reward Model
@@ -179,8 +179,10 @@ function explore_dataset(dataset)
             global alpha_rand = rand(-13:7)/100
         end
 
-        if i < 10
+        if i < 100
             C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
+        elseif i < 200
+            C172 = Airplane(-x_step+1, y_step-1, 0.17, 20, 28, 0)
         else
             C172 = Airplane(x_rand, y_rand, th_rand, power_rand, V_rand, alpha_rand)
         end
