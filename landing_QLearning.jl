@@ -105,8 +105,8 @@ UNCOMMENT TO CREATE NEW DATASET
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset7.csv";
-outputfilename = "landing7.policy";
+inputfilename = "test_dataset8.csv";
+outputfilename = "landing8.policy";
 space = S
 epsilon = 0.8 #for epsilon greedy
 @time compute(inputfilename, outputfilename, space, epsilon)

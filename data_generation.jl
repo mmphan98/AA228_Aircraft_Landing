@@ -11,7 +11,7 @@ include("simulator.jl")
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset7.csv"
+const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset8.csv"
 
 """ 
 Reward Model
@@ -28,34 +28,36 @@ function calc_Reward(model::Airplane, action)
     if !sim_valid(model)
         # Negative reward if out of bounds of simulation
         reward = -100
-    else
-        # Initiate reward
-        reward = 0
+        return reward
+    end
 
-        # Negative reward for each time step
-        reward -= 1 
+    # Initiate reward
+    reward = 0
 
-        # Negative reward for each change in pitch or power
-        if (action == 1 || action == 3 || action == 7 || action == 9)
-            reward -= 2 #pitch/power not same
-        elseif (action == 2 || action == 4 || action == 6 || action == 8)
-            reward -= 1 #pitch or power not same
-        end
+    # Negative reward for each time step
+    reward -= 1 
 
-        # Negative reward for stalling
-        if model.V_air < stall_speed + V_air_step
+    # Negative reward for each change in pitch or power
+    if (action == 1 || action == 3 || action == 7 || action == 9)
+        reward -= 2 #pitch/power not same
+    elseif (action == 2 || action == 4 || action == 6 || action == 8)
+        reward -= 1 #pitch or power not same
+    end
+
+    # Negative reward for stalling
+    if model.V_air < stall_speed + V_air_step
+        reward -= 100
+        return reward
+    end
+
+    # Negative reward for crashing on landing
+    if model.x > -x_step && model.y < y_step #at landing spot
+        if model.V_air > landing_speed #overall airspeed is too fast
+            reward -= 100 
+        elseif abs(model.V_air*sin(model.alpha)) > landing_Vspeed_buffer #verticle component of airspeed is too large
             reward -= 100
-        end
-
-        # Negative reward for crashing on landing
-        if model.x > -x_step && model.y < y_step #at landing spot
-            if model.V_air > landing_speed #overall airspeed is too fast
-                reward -= 100 
-            elseif abs(model.V_air*sin(model.alpha)) > landing_Vspeed_buffer #verticle component of airspeed is too large
-                reward -= 100
-            else
-                reward += 200 #successful landing
-            end
+        else
+            reward += 200 #successful landing
         end
     end
 
@@ -164,7 +166,7 @@ Airplane Model
 Generate random exploration data for Q-Learning
 """
 function explore_dataset(dataset)
-    iter = 200000
+    iter = 10000
 
     for i in 1:iter
         #C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
@@ -182,7 +184,7 @@ function explore_dataset(dataset)
         if i < 100
             C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
         elseif i < 200
-            C172 = Airplane(-x_step+1, y_step-1, 0.17, 20, 28, 0)
+            C172 = Airplane(-x_step+1, y_step-1, 0.10, 20, 32, 0)
         else
             C172 = Airplane(x_rand, y_rand, th_rand, power_rand, V_rand, alpha_rand)
         end
