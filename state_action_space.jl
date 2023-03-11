@@ -14,12 +14,12 @@ Definition of state space
 """
 # Constants
 const x_max = 0
-const x_min = -4500
-const x_step = 100
+const x_min = -900
+const x_step = 50
 
-const y_max = 300
+const y_max = 120
 const y_min = 0
-const y_step = 30
+const y_step = 10
 
 const V_air_max = 60
 const V_air_min = stall_speed

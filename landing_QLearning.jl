@@ -68,7 +68,7 @@ function BRes(Q, Q_prev)
     Q_new = []
     delta = Inf # for Bellman Residual
     iter = 0
-    error = 1E-06
+    error = 1E-03
     while delta > error
         # Updating model based off data
         for i in 1:length(df.s)
@@ -105,8 +105,8 @@ UNCOMMENT TO CREATE NEW DATASET
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset8.csv";
-outputfilename = "landing8.policy";
+inputfilename = "test_dataset11.csv";
+outputfilename = "landing11.policy";
 space = S
 epsilon = 0.8 #for epsilon greedy
 @time compute(inputfilename, outputfilename, space, epsilon)

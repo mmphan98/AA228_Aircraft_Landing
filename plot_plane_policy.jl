@@ -19,7 +19,7 @@ function plot_policy(inputfilename, outputfilename)
 
     policy = CSV.read(inputpath, DataFrame; header = false)
 
-    C172 = Airplane(-4500, 300, 0.00, 150, 50, -0.0525)
+    C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525)
     plot_x = Vector{Float64}()
     plot_y = Vector{Float64}()
     plot_th = Vector{Float64}()
@@ -59,6 +59,6 @@ UNCOMMENT TO CREATE NEW PLOTS
 
 Run plotting
 """
-inputfilename = "landing7.policy";
-outputfilename = "testplot7.png";
+inputfilename = "landing11.policy";
+outputfilename = "testplot11.png";
 @time plot_policy(inputfilename, outputfilename)

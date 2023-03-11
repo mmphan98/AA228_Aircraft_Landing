@@ -26,7 +26,7 @@ const landing_Vspeed_buffer = 2 # allowable variation in Vy on touchdown
 const wind_speed = Normal(0,2)
 
 #Model Constants
-const dt = 2            # time step for the dynamics model [s]
+const dt = 1            # time step for the dynamics model [s]
 
 """
 Defining a struct for an airplane object
@@ -69,7 +69,7 @@ function update_Airplane!(model::Airplane, th_p, power_p)
     Vx = (V_air * cos(alpha)) + (Fx / m)*dt
     Vy = (V_air * sin(alpha)) + (Fy / m)*dt
     # Adding Gaussian noise for wind
-    Vx += rand(wind_speed,1)[1]
+    # Vx += rand(wind_speed,1)[1]
     # Vy += rand(wind_speed,1)[1]
     model.V_air = sqrt(Vx^2 + Vy^2)
 
