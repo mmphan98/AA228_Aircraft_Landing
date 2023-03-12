@@ -11,7 +11,7 @@ include("simulator.jl")
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset11.csv"
+const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset12.csv"
 
 """ 
 Reward Model
@@ -27,37 +27,34 @@ This function calculates the reward for a give state and action, R(s,a)
 function calc_Reward(model::Airplane, action)
     if !sim_valid(model)
         # Negative reward if out of bounds of simulation
-        reward = -100
+        reward = -1000
         return reward
     end
 
     # Initiate reward
     reward = 0
 
-    # Negative reward for each time step
-    reward -= 1 
-
     # Negative reward for each change in pitch or power
     if (action == 1 || action == 3 || action == 7 || action == 9)
-        reward -= 2 #pitch/power not same
+        reward -= 20 #pitch/power not same
     elseif (action == 2 || action == 4 || action == 6 || action == 8)
-        reward -= 1 #pitch or power not same
+        reward -= 10 #pitch or power not same
     end
 
     # Negative reward for stalling
     if model.V_air < stall_speed + V_air_step
-        reward -= 100
+        reward -= 1000
         return reward
     end
 
     # Negative reward for crashing on landing
     if model.x > -x_step && model.y < y_step #at landing spot
         if model.V_air > landing_speed #overall airspeed is too fast
-            reward -= 100 
+            reward -= 1000 
         elseif abs(model.V_air*sin(model.alpha)) > landing_Vspeed_buffer #verticle component of airspeed is too large
-            reward -= 100
+            reward -= 1000
         else
-            reward += 200 #successful landing
+            reward += 5000 #successful landing
         end
     end
 
@@ -166,24 +163,34 @@ Airplane Model
 Generate random exploration data for Q-Learning
 """
 function explore_dataset(dataset)
-    iter = 25000
+    iter = 20000
 
     for i in 1:iter
-        if i % 20 == 1
-            global x_rand = rand(x_min:0)
-            global y_rand = rand(0:y_max)
-            global th_rand = rand(th_min*10000:th_max*10000)/10000
-            global power_rand = rand(power_min:power_max)
-            global V_rand = rand(V_air_min:V_air_max)
-            global alpha_rand = rand(alpha_min*100:alpha_max*100)/100
-        end
+        # if i % 20 == 1
+        #     global x_rand = rand(x_min:0)
+        #     global y_rand = rand(0:y_max)
+        #     global th_rand = rand(th_min*10000:th_max*10000)/10000
+        #     global power_rand = rand(power_min:power_max)
+        #     global V_rand = rand(V_air_min:V_air_max)
+        #     global alpha_rand = rand(alpha_min*100:alpha_max*100)/100
+        # end
 
-        if i < 100
+        # if i < 100
+        #     C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525)
+        # elseif i < 200
+        #     C172 = Airplane(-x_step+1, y_step-1, 0.10, 20, 32, 0)
+        # else
+        #     C172 = Airplane(x_rand, y_rand, th_rand, power_rand, V_rand, alpha_rand)
+        # end
+
+        if i < iter/4
             C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525)
-        elseif i < 200
-            C172 = Airplane(-x_step+1, y_step-1, 0.10, 20, 32, 0)
+        elseif i < 2*iter/4
+            C172 = Airplane(3*x_min/4, 3*y_max/4, 0.00, 150, 50, -0.0525)
+        elseif i < 3*iter/4
+            C172 = Airplane(2*x_min/4, 2*y_max/4, 0.00, 150, 50, -0.0525)
         else
-            C172 = Airplane(x_rand, y_rand, th_rand, power_rand, V_rand, alpha_rand)
+            C172 = Airplane(-x_step+1, y_step-1, 0.10, 20, 32, 0)
         end
 
         while (sim_valid(C172))
@@ -223,10 +230,10 @@ end
 UNCOMMENT TO CREATE NEW DATASET
 """
 
-# # Compute dataset
-# dataset = Matrix{Int64}(undef, 0, 4)
-# dataset = @time explore_dataset(dataset)
+# Compute dataset
+dataset = Matrix{Int64}(undef, 0, 4)
+dataset = @time explore_dataset(dataset)
 
-# # Write dataset to a CSV
-# table = Tables.table(dataset)
-# CSV.write(savepath, table)
+# Write dataset to a CSV
+table = Tables.table(dataset)
+CSV.write(savepath, table)

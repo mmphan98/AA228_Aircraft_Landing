@@ -58,7 +58,7 @@ function BRes(Q, Q_prev)
     # Define the Q-Learning Model
     C172Model_S = collect(1:length(space))
     C172Model_A = collect(1:length(A))
-    C172Model_gamma = 0.95
+    C172Model_gamma = 1
     C172Model_Q = zeros(length(C172Model_S),length(A))
     C172Model_alpha = 0.1
     C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C172Model_alpha)
@@ -105,8 +105,8 @@ UNCOMMENT TO CREATE NEW DATASET
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset11.csv";
-outputfilename = "landing11.policy";
+inputfilename = "test_dataset12.csv";
+outputfilename = "landing12.policy";
 space = S
 epsilon = 0.8 #for epsilon greedy
 @time compute(inputfilename, outputfilename, space, epsilon)
