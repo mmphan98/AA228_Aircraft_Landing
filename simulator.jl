@@ -35,7 +35,7 @@ mutable struct Airplane
 
     #Attitude Characteristics
     x::Float64       # distance of airplane from runway (m)
-    y::Float64       # altitude of airplane from the runway (m)
+    y::Float64       # altitude of airplane from the runway (ms)
     th::Float64      # pitch of the airplane (rad), horizontal is 0
     power::Float64   # power setting
 
@@ -44,20 +44,41 @@ mutable struct Airplane
     alpha::Float64   # angle of path (rad), horizontal is 0
 
 end
+Base.copy(model::Airplane) = Airplane(model.x, model.y, model.th, model.power, model.V_air, model.alpha)
+
+"""
+Defining a function to calculate the drag coefficient, given pitch. Exponential fit vs angle of attack in deg
+"""
+function Dcoeff(th)
+    th*=180/pi
+    return 0.0178*exp(0.139*th)
+end
+
+"""
+Defining a function to calculate the lift coefficient, given pitch. Polynomial fit of degree 6 vs angle of attack in deg
+"""
+function Lcoeff(th)
+    th*=180/pi
+    return 0.335 + 0.0817*(th) - 2.32*(10^-4)*(th^2) + 3.13*(10^-4)*(th^3) - 1.91*(10^-5)*(th^4)
+end
+# function Lcoeff(th)
+#     th*=180/pi
+#     return 0.136*(th) - 0.0413*(th^2) + 0.01*(th^3) - 1.01*(10^-3)*(th^4) + 4.59*(10^-5)*(th^5) - 7.69*(10^-6)*(th^6)
+# end
 
 """
 Defining a dynamics model via a function that updates the Airplane model
 """
 function update_Airplane!(model::Airplane, th_p, power_p)
 
-    # Access existing airplane values from previous step
-    th, power, V_air, alpha = model.th, model.power, model.V_air, model.alpha
-
     # Updating power
     model.power = power_p
 
     # Updating angle of path
     model.th = th_p
+
+    # Access existing airplane values from previous step
+    th, power, V_air, alpha = model.th, model.power, model.V_air, model.alpha
 
     # Sum of forces
     lift = Lcoeff(th + AOI) * roh * V_air^2 * A_wing/ 2
@@ -83,23 +104,3 @@ function update_Airplane!(model::Airplane, th_p, power_p)
 
     return model
 end
-
-"""
-Defining a function to calculate the drag coefficient, given pitch. Exponential fit vs angle of attack in deg
-"""
-function Dcoeff(th)
-    th*=180/pi
-    return 0.0178*exp(0.139*th)
-end
-
-"""
-Defining a function to calculate the lift coefficient, given pitch. Polynomial fit of degree 6 vs angle of attack in deg
-"""
-function Lcoeff(th)
-    th*=180/pi
-    return 0.335 + 0.0817*(th) - 2.32*(10^-4)*(th^2) + 3.13*(10^-4)*(th^3) - 1.91*(10^-5)*(th^4)
-end
-# function Lcoeff(th)
-#     th*=180/pi
-#     return 0.136*(th) - 0.0413*(th^2) + 0.01*(th^3) - 1.01*(10^-3)*(th^4) + 4.59*(10^-5)*(th^5) - 7.69*(10^-6)*(th^6)
-# end
