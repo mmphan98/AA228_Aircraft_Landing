@@ -10,7 +10,7 @@ using DataFrames
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset13.csv"
+# const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset13.csv"
 const landing_reward = 5000
 
 """ 
@@ -169,8 +169,7 @@ Airplane Model
 """ 
 Generate random exploration data for Q-Learning
 """
-function explore_dataset(dataset)
-    iter = 100000
+function explore_dataset(dataset, iter)
 
     for i in 1:iter
 

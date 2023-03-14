@@ -47,7 +47,7 @@ mutable struct Airplane
     landed::Bool     # boolean value for landed (true if landed)
 
 end
-Base.copy(model::Airplane) = Airplane(model.x, model.y, model.th, model.power, model.V_air, model.alpha)
+Base.copy(model::Airplane) = Airplane(model.x, model.y, model.th, model.power, model.V_air, model.alpha, model.landed)
 
 """
 Defining a function to calculate the drag coefficient, given pitch. Exponential fit vs angle of attack in deg

@@ -7,7 +7,7 @@ using Printf
 using CSV
 using DataFrames
 using LinearAlgebra
-include("state_action_space.jl")
+include("data_generation_sequential.jl")
 
 # Defining a function that writes the policy to the specified file output path
 function writePolicy(Q, path)
@@ -94,19 +94,21 @@ end
 UNCOMMENT TO CREATE NEW DATASET
 """
 
-# # Compute dataset
-# dataset = Matrix{Int64}(undef, 0, 4)
-# dataset = explore_dataset(dataset)
+# Compute dataset
+dataset = Matrix{Int64}(undef, 0, 4)
+iter = 50
+dataset = explore_dataset(dataset, iter)
 
-# # Write dataset to a CSV
-# table = Tables.table(dataset)
-# CSV.write(savepath, table)
+# Write dataset to a CSV
+table = Tables.table(dataset)
+const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset13.csv"
+CSV.write(savepath, table)
 
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset12.csv";
-outputfilename = "landing12.policy";
-space = S
-epsilon = 0.8 #for epsilon greedy
-@time compute(inputfilename, outputfilename, space, epsilon)
+# inputfilename = "test_dataset12.csv";
+# outputfilename = "landing12.policy";
+# space = S
+# epsilon = 0.8 #for epsilon greedy
+# @time compute(inputfilename, outputfilename, space, epsilon)
