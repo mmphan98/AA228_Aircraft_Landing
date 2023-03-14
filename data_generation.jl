@@ -58,6 +58,7 @@ function calc_Reward(model::Airplane, action)
             reward -= 1000
         else
             reward += landing_reward #successful landing
+            model.landed = true
         end
     end
 

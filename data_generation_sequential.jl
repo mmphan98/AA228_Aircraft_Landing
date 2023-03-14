@@ -58,6 +58,7 @@ function calc_Reward(model::Airplane, action)
             reward -= 1000
         else
             reward += landing_reward #successful landing
+            model.landed = true
         end
     end
 
@@ -135,6 +136,9 @@ function sim_valid(model::Airplane)
     # Flight Path angle
     elseif model.alpha > alpha_max || model.alpha < alpha_min
         # @printf("Path out of bounds \n")
+        return false
+    elseif model.landed == true
+        # @printf("Plane landed \n")
         return false
     else
         return true
