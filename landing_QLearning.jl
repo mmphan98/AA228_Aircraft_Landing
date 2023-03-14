@@ -45,7 +45,7 @@ function BRes(Q, Q_prev)
  end
 
  # Defining the function for Q-Learning
- function compute(infile, outfile, space, epsilon)
+ function compute(infile, outfile, space)
     
     inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\"
     outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
@@ -69,7 +69,7 @@ function BRes(Q, Q_prev)
     Q_new = []
     delta = Inf # for Bellman Residual
     iter = 0
-    error = 1000
+    error = 11000
     while delta > error
         @printf("Iteration: %d, Delta: %f\n", iter, delta)
         # Updating model based off data
@@ -88,23 +88,84 @@ function BRes(Q, Q_prev)
     writePolicy(Q_new, outputpath)
 end
 
+# Defining the function for Q-Learning with epsilon greedy
+function compute_epsilon(C172Model::QLearning, dataset, h, maxIter)
+
+    C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
+
+    for i in 1:10
+        epsilon = (11-i)*0.10
+        iter = 0
+        while !C172.landed && (iter < maxIter)
+
+            # Get state index
+            S_idx = find_state_idx(C172)
+
+            # Determine action to take
+            if (rand() < epsilon)
+                action = rand((1:A_size))
+            else
+                action = findmax(C172Model.Q[S_idx,:])[2]
+            end
+        
+            # Append new data (s,a,r,sp)
+            dataset = [dataset; simulate(C172, h, action)]
+        
+            # Update Q-function with new row
+            update!(C172Model, dataset[end,1], dataset[end,2], dataset[end,3], dataset[end,4])
+        
+            # Restart simulation if plane simulation faults
+            if (!sim_valid(C172))
+                C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
+            end
+        
+            iter += 1
+        
+        end
+
+    end
+
+    table = Tables.table(dataset)
+    CSV.write(savepath, table)
+
+end
 
 
 
 
-"""
-UNCOMMENT TO CREATE NEW DATASET
-"""
-
-# Compute dataset
-dataset = Matrix{Int64}(undef, 0, 4)
-iter = 50
-dataset = explore_dataset(dataset, iter)
-
-# Write dataset to a CSV
-table = Tables.table(dataset)
 const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset13.csv"
-CSV.write(savepath, table)
+
+"""
+Runs an epislon greedy exploration stragety
+"""
+# Compute dataset with epsilon greedy
+C172Model_S = collect(1:length(S))
+C172Model_A = collect(1:length(A))
+C172Model_gamma = 1
+C172Model_Q = zeros(length(C172Model_S),length(A))
+C172Model_alpha = 0.3
+C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C172Model_alpha)
+
+dataset = Matrix{Int64}(undef, 0, 4)
+h = 1
+epsilon = 0.5
+maxIter = 10000
+@time compute_epsilon(C172Model, dataset, h, maxIter)
+
+
+"""
+Runs an randomized exploration strategy and generates a dataset
+"""
+# # Compute dataset
+# dataset = Matrix{Int64}(undef, 0, 4)
+# iter = 50
+# dataset = explore_dataset(dataset, iter)
+
+# # Write dataset to a CSV
+# table = Tables.table(dataset)
+# const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset13.csv"
+# CSV.write(savepath, table)
+
 
 """
 Run the Q-Learning algorithm to obtain the optimal policy
@@ -112,5 +173,4 @@ Run the Q-Learning algorithm to obtain the optimal policy
 inputfilename = "test_dataset13.csv";
 outputfilename = "landing13.policy";
 space = S
-epsilon = 0.8 #for epsilon greedy
-@time compute(inputfilename, outputfilename, space, epsilon)
+@time compute(inputfilename, outputfilename, space)

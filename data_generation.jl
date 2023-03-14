@@ -50,6 +50,11 @@ function calc_Reward(model::Airplane, action)
         return reward
     end
 
+    # Positive reward for descending
+    if sin(model.alpha) * model.V_air < 0
+        reward += 50
+    end
+
     # Negative reward for crashing on landing
     if model.x > -x_step && model.y < y_step #at landing spot
         if model.V_air > landing_speed #overall airspeed is too fast
@@ -238,6 +243,38 @@ function explore_dataset(dataset, iter)
     return dataset
 end
 
+""" 
+Simulate steps ahead 
+"""
+function simulate(C172::Airplane, h, action)
+
+    # for i in 1:h
+
+        # Find the current state space index
+        S_idx = find_state_idx(C172)
+
+        # Generate action
+        th, power = action_pitch_power_result(C172, action) 
+
+        #Update the airplane model
+        update_Airplane!(C172, th, power)
+
+        #Update dataset
+        R = calc_Reward(C172, action)
+        # @printf("Reward: %d \n", R)
+        if (sim_valid(C172) && C172.landed == false)
+            new_state = find_state_idx(C172)
+            new_data = [S_idx, action, R, new_state]
+        else
+            new_data = [S_idx, action, R, S_idx]
+        #     @printf("Simulation terminated \n")
+        end
+
+    # end
+
+    return transpose(new_data)
+
+end
 
 """
 UNCOMMENT TO CREATE NEW DATASET

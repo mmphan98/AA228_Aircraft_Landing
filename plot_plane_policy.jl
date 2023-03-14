@@ -10,11 +10,12 @@ include("data_generation.jl")
 
 
 function plot_policy(inputfilename, outputfilename)
-    # inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
-    # outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\plots\\"
+    inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
+    outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\plots\\"
     
-    inprefix = "policy/"
-    outprefix = "plots/"
+    # inprefix = "policy/"
+    # outprefix = "plots/"
+
     inputpath = string(inprefix, inputfilename)
     outputpath = string(outprefix, outputfilename)
 
@@ -42,6 +43,9 @@ function plot_policy(inputfilename, outputfilename)
 
         #Update the airplane model
         update_Airplane!(C172, th, power)
+        if C172.landed == true
+            @printf("PLANE LANDED!!!\n")
+        end
     end
 
     p1 = plot(plot_x, plot_y, title="x v. y", seriestype=:scatter)
