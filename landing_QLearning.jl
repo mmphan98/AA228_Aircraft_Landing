@@ -54,6 +54,7 @@ function BRes(Q, Q_prev)
     
     # Read in CSV file
     df = CSV.read(inputpath, DataFrame; header = true)
+    rename!(df, [:s, :a, :r, :sp])
     
     # Define the Q-Learning Model
     C172Model_S = collect(1:length(space))
@@ -108,8 +109,8 @@ CSV.write(savepath, table)
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-# inputfilename = "test_dataset12.csv";
-# outputfilename = "landing12.policy";
-# space = S
-# epsilon = 0.8 #for epsilon greedy
-# @time compute(inputfilename, outputfilename, space, epsilon)
+inputfilename = "test_dataset13.csv";
+outputfilename = "landing13.policy";
+space = S
+epsilon = 0.8 #for epsilon greedy
+@time compute(inputfilename, outputfilename, space, epsilon)
