@@ -212,7 +212,7 @@ function explore_dataset(dataset, iter)
             #Update dataset
             R = calc_Reward(C172, rand_action)
             # @printf("Reward: %d \n", R)
-            if (sim_valid(C172))
+            if (sim_valid(C172) && C172.landed == false)
                 new_state = find_state_idx(C172)
                 new_data = [S_idx, rand_action, R, new_state]
                 tries = 0

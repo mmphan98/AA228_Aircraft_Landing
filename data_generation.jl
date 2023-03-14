@@ -10,7 +10,7 @@ using DataFrames
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset12.csv"
+# const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset12.csv"
 const landing_reward = 5000
 
 """ 
@@ -76,9 +76,9 @@ function action_pitch_power_result(model::Airplane, action)
 
     # Adjust pitch and power setting
     if action == 1 || action == 4 || action == 7
-        th = model.th + 0.005 #approx 0.25deg adjustments
+        th = model.th + 0.01 #approx 0.25deg adjustments
     elseif action == 3 || action == 6 || action == 9
-        th = model.th - 0.005 #approx 0.25deg adjustments
+        th = model.th - 0.01 #approx 0.25deg adjustments
     end
 
     if action == 1 || action == 2 || action == 3
@@ -169,8 +169,7 @@ Airplane Model
 """ 
 Generate random exploration data for Q-Learning
 """
-function explore_dataset(dataset)
-    iter = 20000
+function explore_dataset(dataset, iter)
 
     for i in 1:iter
         # if i % 20 == 1

@@ -7,7 +7,8 @@ using Printf
 using CSV
 using DataFrames
 using LinearAlgebra
-include("data_generation_sequential.jl")
+include("data_generation.jl")
+# include("data_generation_sequential.jl")
 
 # Defining a function that writes the policy to the specified file output path
 function writePolicy(Q, path)
