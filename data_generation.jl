@@ -7,11 +7,11 @@ using Printf
 using Random
 using CSV
 using DataFrames
-include("simulator.jl")
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
 const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset12.csv"
+const landing_reward = 5000
 
 """ 
 Reward Model
@@ -34,6 +34,9 @@ function calc_Reward(model::Airplane, action)
     # Initiate reward
     reward = 0
 
+    # # Reward for each time step
+    # reward += 20
+
     # Negative reward for each change in pitch or power
     if (action == 1 || action == 3 || action == 7 || action == 9)
         reward -= 20 #pitch/power not same
@@ -54,7 +57,7 @@ function calc_Reward(model::Airplane, action)
         elseif abs(model.V_air*sin(model.alpha)) > landing_Vspeed_buffer #verticle component of airspeed is too large
             reward -= 1000
         else
-            reward += 5000 #successful landing
+            reward += landing_reward #successful landing
         end
     end
 
@@ -189,6 +192,8 @@ function explore_dataset(dataset)
             C172 = Airplane(3*x_min/4, 3*y_max/4, 0.00, 150, 50, -0.0525)
         elseif i < 3*iter/4
             C172 = Airplane(2*x_min/4, 2*y_max/4, 0.00, 150, 50, -0.0525)
+        elseif i < iter - 10
+            C172 = Airplane(1*x_min/4, 1*y_max/4, 0.00, 150, 50, -0.0525)
         else
             C172 = Airplane(-x_step+1, y_step-1, 0.10, 20, 32, 0)
         end
@@ -219,6 +224,11 @@ function explore_dataset(dataset)
             #     @printf("Simulation terminated \n")
             end
             dataset = [dataset; transpose(new_data)]
+
+            # Ending if landed succesfully
+            if R > landing_reward - 20
+                break
+            end
         end
 
     end
@@ -230,10 +240,10 @@ end
 UNCOMMENT TO CREATE NEW DATASET
 """
 
-# Compute dataset
-dataset = Matrix{Int64}(undef, 0, 4)
-dataset = @time explore_dataset(dataset)
+# # Compute dataset
+# dataset = Matrix{Int64}(undef, 0, 4)
+# dataset = @time explore_dataset(dataset)
 
-# Write dataset to a CSV
-table = Tables.table(dataset)
-CSV.write(savepath, table)
+# # Write dataset to a CSV
+# table = Tables.table(dataset)
+# CSV.write(savepath, table)
