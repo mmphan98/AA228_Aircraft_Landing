@@ -136,6 +136,9 @@ function sim_valid(model::Airplane)
     elseif model.alpha > alpha_max || model.alpha < alpha_min
         # @printf("Path out of bounds \n")
         return false
+    elseif model.landed == true
+        # @printf("Plane landed \n")
+        return false
     else
         return true
     end
@@ -187,15 +190,15 @@ function explore_dataset(dataset)
         # end
 
         if i < iter/4
-            C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525)
+            C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
         elseif i < 2*iter/4
-            C172 = Airplane(3*x_min/4, 3*y_max/4, 0.00, 150, 50, -0.0525)
+            C172 = Airplane(3*x_min/4, 3*y_max/4, 0.00, 150, 50, -0.0525, false)
         elseif i < 3*iter/4
-            C172 = Airplane(2*x_min/4, 2*y_max/4, 0.00, 150, 50, -0.0525)
+            C172 = Airplane(2*x_min/4, 2*y_max/4, 0.00, 150, 50, -0.0525, false)
         elseif i < iter - 10
-            C172 = Airplane(1*x_min/4, 1*y_max/4, 0.00, 150, 50, -0.0525)
+            C172 = Airplane(1*x_min/4, 1*y_max/4, 0.00, 150, 50, -0.0525, false)
         else
-            C172 = Airplane(-x_step+1, y_step-1, 0.10, 20, 32, 0)
+            C172 = Airplane(-x_step+1, y_step-1, 0.10, 20, 32, 0, false)
         end
 
         while (sim_valid(C172))
@@ -216,7 +219,7 @@ function explore_dataset(dataset)
             #Update dataset
             R = calc_Reward(C172, rand_action)
             # @printf("Reward: %d \n", R)
-            if (sim_valid(C172))
+            if (sim_valid(C172) && C172.landed == false)
                 new_state = find_state_idx(C172)
                 new_data = [S_idx, rand_action, R, new_state]
             else

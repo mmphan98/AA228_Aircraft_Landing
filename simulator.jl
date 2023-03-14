@@ -43,6 +43,9 @@ mutable struct Airplane
     V_air::Float64   # airspeed (m/s)
     alpha::Float64   # angle of path (rad), horizontal is 0
 
+    #Plane landed boolean
+    landed::Bool     # boolean value for landed (true if landed)
+
 end
 Base.copy(model::Airplane) = Airplane(model.x, model.y, model.th, model.power, model.V_air, model.alpha)
 
