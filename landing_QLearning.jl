@@ -7,7 +7,6 @@ using Printf
 using CSV
 using DataFrames
 using LinearAlgebra
-include("simulator.jl")
 include("state_action_space.jl")
 
 # Defining a function that writes the policy to the specified file output path
@@ -60,7 +59,7 @@ function BRes(Q, Q_prev)
     C172Model_A = collect(1:length(A))
     C172Model_gamma = 1
     C172Model_Q = zeros(length(C172Model_S),length(A))
-    C172Model_alpha = 0.1
+    C172Model_alpha = 0.3
     C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C172Model_alpha)
 
     # Iterate with Q-Learning
@@ -68,8 +67,9 @@ function BRes(Q, Q_prev)
     Q_new = []
     delta = Inf # for Bellman Residual
     iter = 0
-    error = 1E-03
+    error = 1000
     while delta > error
+        @printf("Iteration: %d, Delta: %f\n", iter, delta)
         # Updating model based off data
         for i in 1:length(df.s)
             update!(C172Model, df.s[i], df.a[i], df.r[i], df.sp[i])

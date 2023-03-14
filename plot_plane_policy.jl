@@ -6,8 +6,6 @@ the Q-Learning algorithm
 using CSV
 using DataFrames
 using Plots
-include("simulator.jl")
-include("state_action_space.jl")
 include("data_generation.jl")
 
 

@@ -30,13 +30,13 @@ const alpha_max = 0.07
 const alpha_step = 0.01
 
 # Building the state space
-x = collect(1:((x_max - x_min)/x_step) + 1)
-y = collect(1:((y_max - y_min)/y_step) + 1)
-V_air = collect(1:((V_air_max - V_air_min)/V_air_step) + 1)
-alpha = collect(1:((alpha_max - alpha_min)/alpha_step) + 1)
-S_size = length(x)*length(y)*length(V_air)*length(alpha)
+S_x = collect(1:((x_max - x_min)/x_step) + 1)
+S_y = collect(1:((y_max - y_min)/y_step) + 1)
+S_V_air = collect(1:((V_air_max - V_air_min)/V_air_step) + 1)
+S_alpha = collect(1:((alpha_max - alpha_min)/alpha_step) + 1)
+S_size = length(S_x)*length(S_y)*length(S_V_air)*length(S_alpha)
 
-S = reshape(1:S_size, length(x), length(y), length(V_air), length(alpha))
+S = reshape(1:S_size, length(S_x), length(S_y), length(S_V_air), length(S_alpha))
 
 """
 Definition of action space
