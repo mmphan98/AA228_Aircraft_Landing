@@ -7,7 +7,7 @@ using Random
 using Distributions
 
 #Fundamental Constants
-const roh = 1.225       # density of air, STP, kg/m^3
+const rho = 1.225       # density of air, STP, kg/m^3
 const g = 9.81          # gravity, m/s^2
 
 #Plane Constants
@@ -84,8 +84,8 @@ function update_Airplane!(model::Airplane, th_p, power_p)
     th, power, V_air, alpha = model.th, model.power, model.V_air, model.alpha
 
     # Sum of forces
-    lift = Lcoeff(th + AOI) * roh * V_air^2 * A_wing/ 2
-    drag = Dcoeff(th + AOI) * roh * V_air^2 * A_wing/ 2
+    lift = Lcoeff(th + AOI) * rho * V_air^2 * A_wing/ 2
+    drag = Dcoeff(th + AOI) * rho * V_air^2 * A_wing/ 2
     Fx = (power * g * cos(th)) - (lift * sin(th + AOI)) - (drag * cos(th + AOI))
     Fy = (-m * g) + (power * g * sin(th)) + (lift * cos(th + AOI)) - (drag * sin(th + AOI))
 
@@ -102,8 +102,8 @@ function update_Airplane!(model::Airplane, th_p, power_p)
     #model.alpha = asin(Vy/V_air)
 
     # Calculate new position
-    model.x += Vx * abs(cos(alpha)) * dt
-    model.y += Vy * abs(sin(alpha)) * dt
+    model.x += V_air * cos(alpha) * dt
+    model.y += V_air * sin(alpha) * dt
 
     return model
 end

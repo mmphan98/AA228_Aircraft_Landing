@@ -51,12 +51,19 @@ function calc_Reward(model::Airplane, action)
     end
 
     # Positive reward for descending
-    if sin(model.alpha) * model.V_air < 0
-        reward += 50
-    end
+    # if sin(model.alpha) * model.V_air < 0
+    #     reward += 50
+    # end
+
+    # Positive reward for getting closer to the landing zone
+
+    max_distant = sqrt(x_min^2 + y_max^2)
+    model_distant = sqrt(model.x^2 + model.y^2)
+    reward += trunc(Int, 100 * (max_distant - model_distant) / max_distant)
+
     
     # Positive reward for slowing down
-    reward += trunc(Int, 2*(V_air_max - (model.V_air - landing_speed)))
+    # reward += trunc(Int, 2*(V_air_max - (model.V_air - landing_speed)))
 
     # Negative reward for crashing on landing
     if model.x > -x_step && model.y < y_step #at landing spot

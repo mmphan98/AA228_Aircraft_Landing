@@ -49,8 +49,8 @@ function BRes(Q, Q_prev)
  # Defining the function for Q-Learning
  function compute(infile, outfile, space)
     
-    inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\"
-    outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
+    inprefix = "data/"
+    outprefix = "policy/"
     inputpath = string(inprefix, infile)
     outputpath = string(outprefix, outfile)
     
@@ -73,7 +73,7 @@ function BRes(Q, Q_prev)
     iter = 0
     error = 1
     # while delta > error
-    while iter < 5
+    while iter < 10
         @printf("Iteration: %d, Delta: %f\n", iter, delta)
         # Updating model based off data
         for i in 1:length(df.s)
@@ -94,7 +94,8 @@ end
 # Defining the function for Q-Learning with epsilon greedy
 function compute_epsilon(C172Model::QLearning, dataset, h, maxIter)
 
-    C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
+    # C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
+    C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
 
     for i in 1:10
         epsilon = (11-i)*0.10
@@ -119,7 +120,8 @@ function compute_epsilon(C172Model::QLearning, dataset, h, maxIter)
         
             # Restart simulation if plane simulation faults
             if (!sim_valid(C172))
-                C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
+                C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
+                # C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
             end
         
             iter += 1
@@ -136,7 +138,7 @@ end
 
 
 
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset15.csv"
+const savepath = "data/test_dataset16.csv"
 
 """
 Runs an epislon greedy exploration stragety
@@ -151,7 +153,7 @@ C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C1
 
 dataset = Matrix{Int64}(undef, 0, 4)
 h = 1
-maxIter = 10000
+maxIter = 20000
 @time compute_epsilon(C172Model, dataset, h, maxIter)
 
 
@@ -171,8 +173,8 @@ Runs an randomized exploration strategy and generates a dataset
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset15.csv";
-outputfilename = "landing15.policy";
+inputfilename = "test_dataset16.csv";
+outputfilename = "landing16.policy";
 space = S
 @time compute(inputfilename, outputfilename, space)
 
@@ -182,6 +184,6 @@ UNCOMMENT TO CREATE NEW PLOTS
 
 Run plotting
 """
-inputfilename = "landing15.policy";
-outputfilename = "testplot15.png";
+inputfilename = "landing16.policy";
+outputfilename = "testplot16.png";
 @time plot_policy(inputfilename, outputfilename)

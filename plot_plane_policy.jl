@@ -10,18 +10,20 @@ include("data_generation.jl")
 
 
 function plot_policy(inputfilename, outputfilename)
-    inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
-    outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\plots\\"
+    # inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
+    # outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\plots\\"
     
-    # inprefix = "policy/"
-    # outprefix = "plots/"
+    inprefix = "policy/"
+    outprefix = "plots/"
 
     inputpath = string(inprefix, inputfilename)
     outputpath = string(outprefix, outputfilename)
 
     policy = CSV.read(inputpath, DataFrame; header = false)
 
-    C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
+    # C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
+    C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
+
     plot_x = Vector{Float64}()
     plot_y = Vector{Float64}()
     plot_th = Vector{Float64}()
