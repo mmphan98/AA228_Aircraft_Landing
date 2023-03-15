@@ -7,7 +7,9 @@ using Printf
 using CSV
 using DataFrames
 using LinearAlgebra
-include("data_generation.jl")
+# include("data_generation.jl")
+include("plot_plane_policy.jl")
+
 # include("data_generation_sequential.jl")
 
 # Defining a function that writes the policy to the specified file output path
@@ -69,8 +71,9 @@ function BRes(Q, Q_prev)
     Q_new = []
     delta = Inf # for Bellman Residual
     iter = 0
-    error = 11000
-    while delta > error
+    error = 1
+    # while delta > error
+    while iter < 5
         @printf("Iteration: %d, Delta: %f\n", iter, delta)
         # Updating model based off data
         for i in 1:length(df.s)
@@ -133,7 +136,7 @@ end
 
 
 
-const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset13.csv"
+const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset15.csv"
 
 """
 Runs an epislon greedy exploration stragety
@@ -148,7 +151,6 @@ C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C1
 
 dataset = Matrix{Int64}(undef, 0, 4)
 h = 1
-epsilon = 0.5
 maxIter = 10000
 @time compute_epsilon(C172Model, dataset, h, maxIter)
 
@@ -156,7 +158,6 @@ maxIter = 10000
 """
 Runs an randomized exploration strategy and generates a dataset
 """
-# # Compute dataset
 # dataset = Matrix{Int64}(undef, 0, 4)
 # iter = 50
 # dataset = explore_dataset(dataset, iter)
@@ -170,7 +171,17 @@ Runs an randomized exploration strategy and generates a dataset
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset13.csv";
-outputfilename = "landing13.policy";
+inputfilename = "test_dataset15.csv";
+outputfilename = "landing15.policy";
 space = S
 @time compute(inputfilename, outputfilename, space)
+
+
+"""
+UNCOMMENT TO CREATE NEW PLOTS
+
+Run plotting
+"""
+inputfilename = "landing15.policy";
+outputfilename = "testplot15.png";
+@time plot_policy(inputfilename, outputfilename)
