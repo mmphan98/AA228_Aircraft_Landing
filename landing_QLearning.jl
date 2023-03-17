@@ -104,8 +104,8 @@ function compute_epsilon(C172Model::QLearning, dataset, h, maxIter, outfile)
     # C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
     C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
 
-    for i in 1:15
-        epsilon = (15-i) * 0.05
+    for i in 1:20
+        epsilon = (20 - i) * 0.05
         iter = 0
         while !C172.landed && (iter <= maxIter)
 
@@ -147,7 +147,7 @@ end
 
 
 
-const savepath = "data/test_dataset18.csv"
+const savepath = "data/test_dataset20.csv"
 
 """
 Runs an epislon greedy exploration stragety
@@ -163,7 +163,7 @@ C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C1
 dataset = Matrix{Int64}(undef, 0, 4)
 h = 1
 maxIter = 20000
-policy_filename = "landing18.policy";
+policy_filename = "landing20.policy";
 @time compute_epsilon(C172Model, dataset, h, maxIter, policy_filename)
 
 
@@ -183,9 +183,9 @@ Runs an randomized exploration strategy and generates a dataset
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset17.csv";
-outputfilename = "landing17.policy";
-space = S
+# inputfilename = "test_dataset17.csv";
+# outputfilename = "landing17.policy";
+# space = S
 # @time compute(inputfilename, outputfilename, space)
 
 
@@ -194,6 +194,6 @@ UNCOMMENT TO CREATE NEW PLOTS
 
 Run plotting
 """
-inputfilename = "landing18.policy";
-outputfilename = "testplot18.png";
+inputfilename = "landing20.policy";
+outputfilename = "testplot20.png";
 @time plot_policy(inputfilename, outputfilename)

@@ -92,9 +92,9 @@ function update_Airplane!(model::Airplane, th_p, power_p)
     # Calculate new V_air
     Vx = (V_air * cos(alpha)) + (Fx / m)*dt
     Vy = (V_air * sin(alpha)) + (Fy / m)*dt
+    
     # Adding Gaussian noise for wind
-    # Vx += rand(wind_speed,1)[1]
-    # Vy += rand(wind_speed,1)[1]
+    V_wind = trunc(rand(wind_speed))
     model.V_air = sqrt(Vx^2 + Vy^2)
 
     # Calculate new alpha, angle of flight path
@@ -102,7 +102,7 @@ function update_Airplane!(model::Airplane, th_p, power_p)
     #model.alpha = asin(Vy/V_air)
 
     # Calculate new position
-    model.x += V_air * cos(alpha) * dt
+    model.x += (V_air * cos(alpha) + V_wind) * dt
     model.y += V_air * sin(alpha) * dt
 
     return model

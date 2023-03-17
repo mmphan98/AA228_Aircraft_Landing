@@ -68,7 +68,7 @@ function calc_Reward(model::Airplane, action)
     # reward += trunc(Int, 2*(V_air_max - (model.V_air - landing_speed)))
 
     # Negative reward for crashing on landing
-    if model.x > -x_step && model.y < y_step #at landing spot
+    if model.x > -2*x_step && model.y < y_step #at landing spot
         if model.V_air > landing_speed #overall airspeed is too fast
             reward -= 500 
         elseif abs(model.V_air*sin(model.alpha)) > landing_Vspeed_buffer #verticle component of airspeed is too large
