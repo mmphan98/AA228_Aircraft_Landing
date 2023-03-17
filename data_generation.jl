@@ -11,7 +11,7 @@ include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
 # const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset12.csv"
-const landing_reward = 5000
+const landing_reward = 10000
 
 """ 
 Reward Model
@@ -56,11 +56,13 @@ function calc_Reward(model::Airplane, action)
     # end
 
     # Positive reward for getting closer to the landing zone
-
     max_distant = sqrt(x_min^2 + y_max^2)
     model_distant = sqrt(model.x^2 + model.y^2)
-    reward += trunc(Int, 100 * (max_distant - model_distant) / max_distant)
+    reward += trunc(Int, 120 * (max_distant - model_distant) / max_distant)
 
+    # Negative reward for deviating from optimal alpha
+    target_alpha = -0.0525
+    reward -= trunc(Int, 60 * abs((target_alpha - model.alpha) / target_alpha))
     
     # Positive reward for slowing down
     # reward += trunc(Int, 2*(V_air_max - (model.V_air - landing_speed)))
@@ -68,9 +70,9 @@ function calc_Reward(model::Airplane, action)
     # Negative reward for crashing on landing
     if model.x > -x_step && model.y < y_step #at landing spot
         if model.V_air > landing_speed #overall airspeed is too fast
-            reward -= 1000 
+            reward -= 500 
         elseif abs(model.V_air*sin(model.alpha)) > landing_Vspeed_buffer #verticle component of airspeed is too large
-            reward -= 1000
+            reward -= 500
         else
             reward += landing_reward #successful landing
             model.landed = true

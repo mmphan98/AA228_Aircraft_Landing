@@ -19,6 +19,7 @@ function writePolicy(Q, path)
             if findmax(Q[row,:])[1] == 0
                 @printf(io, "%d\n", 5)
             else
+                # @printf(io, "%d\n", findmax(Q[row,:])[1])
                 @printf(io, "%d\n", findmax(Q[row,:])[2])
             end
         end
@@ -44,11 +45,10 @@ end
 # Defining a function that calculates the Bellman Residual given two Q matrices 
 function BRes(Q, Q_prev)
     return norm(findmax(Q, dims=2)[1] - findmax(Q_prev, dims=2)[1], Inf) 
- end
+end
 
- # Defining the function for Q-Learning
- function compute(infile, outfile, space)
-    
+# Defining the function for Q-Learning
+function compute(infile, outfile, space)
     inprefix = "data/"
     outprefix = "policy/"
     inputpath = string(inprefix, infile)
@@ -57,7 +57,10 @@ function BRes(Q, Q_prev)
     # Read in CSV file
     df = CSV.read(inputpath, DataFrame; header = true)
     rename!(df, [:s, :a, :r, :sp])
-    
+
+    # Modify the data to include more good trajectories
+    # df =  df[19*Int(trunc(size(df)[1]/20)):end, :]
+
     # Define the Q-Learning Model
     C172Model_S = collect(1:length(space))
     C172Model_A = collect(1:length(A))
@@ -71,10 +74,11 @@ function BRes(Q, Q_prev)
     Q_new = []
     delta = Inf # for Bellman Residual
     iter = 0
-    error = 1
-    # while delta > error
-    while iter < 10
+    error = .1
+    while delta > error
+    # while iter < 10
         @printf("Iteration: %d, Delta: %f\n", iter, delta)
+
         # Updating model based off data
         for i in 1:length(df.s)
             update!(C172Model, df.s[i], df.a[i], df.r[i], df.sp[i])
@@ -92,15 +96,18 @@ function BRes(Q, Q_prev)
 end
 
 # Defining the function for Q-Learning with epsilon greedy
-function compute_epsilon(C172Model::QLearning, dataset, h, maxIter)
+function compute_epsilon(C172Model::QLearning, dataset, h, maxIter, outfile)
+
+    outprefix = "policy/"
+    outputpath = string(outprefix, outfile)
 
     # C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
     C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
 
-    for i in 1:10
-        epsilon = (11-i)*0.10
+    for i in 1:15
+        epsilon = (15-i) * 0.05
         iter = 0
-        while !C172.landed && (iter < maxIter)
+        while !C172.landed && (iter <= maxIter)
 
             # Get state index
             S_idx = find_state_idx(C172)
@@ -133,12 +140,14 @@ function compute_epsilon(C172Model::QLearning, dataset, h, maxIter)
     table = Tables.table(dataset)
     CSV.write(savepath, table)
 
+    # Write policy from e-greedy q-function
+    writePolicy(C172Model.Q, outputpath)
 end
 
 
 
 
-const savepath = "data/test_dataset16.csv"
+const savepath = "data/test_dataset18.csv"
 
 """
 Runs an epislon greedy exploration stragety
@@ -154,7 +163,8 @@ C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C1
 dataset = Matrix{Int64}(undef, 0, 4)
 h = 1
 maxIter = 20000
-@time compute_epsilon(C172Model, dataset, h, maxIter)
+policy_filename = "landing18.policy";
+@time compute_epsilon(C172Model, dataset, h, maxIter, policy_filename)
 
 
 """
@@ -173,10 +183,10 @@ Runs an randomized exploration strategy and generates a dataset
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-inputfilename = "test_dataset16.csv";
-outputfilename = "landing16.policy";
+inputfilename = "test_dataset17.csv";
+outputfilename = "landing17.policy";
 space = S
-@time compute(inputfilename, outputfilename, space)
+# @time compute(inputfilename, outputfilename, space)
 
 
 """
@@ -184,6 +194,6 @@ UNCOMMENT TO CREATE NEW PLOTS
 
 Run plotting
 """
-inputfilename = "landing16.policy";
-outputfilename = "testplot16.png";
+inputfilename = "landing18.policy";
+outputfilename = "testplot18.png";
 @time plot_policy(inputfilename, outputfilename)

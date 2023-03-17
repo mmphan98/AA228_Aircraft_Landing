@@ -30,6 +30,8 @@ function plot_policy(inputfilename, outputfilename)
     plot_p = Vector{Float64}()
     plot_v = Vector{Float64}()
     plot_al = Vector{Float64}()
+    plot_r = Vector{Float64}()
+    total_reward = 0
 
     while (sim_valid(C172))
         push!(plot_x, C172.x)
@@ -45,17 +47,30 @@ function plot_policy(inputfilename, outputfilename)
 
         #Update the airplane model
         update_Airplane!(C172, th, power)
+
+        # println(calc_Reward(C172, action))
+        total_reward += calc_Reward(C172, action)
+        push!(plot_r, total_reward)
+
         if C172.landed == true
             @printf("PLANE LANDED!!!\n")
         end
     end
 
-    p1 = plot(plot_x, plot_y, title="x v. y", seriestype=:scatter)
-    p2 = plot(plot_x, plot_th, title="x v. th", seriestype=:scatter)
-    p3 = plot(plot_x, plot_p, title="x v. power", seriestype=:scatter)
-    p4 = plot(plot_x, plot_v, title="x v. velocity", seriestype=:scatter)
-    p5 = plot(plot_x, plot_al, title="x v. alpha", seriestype=:scatter)
-    p6 = plot(plot_th, plot_v, title="th v. velocity", seriestype=:scatter)
+    # push!(plot_x, C172.x)
+    # push!(plot_y, C172.y)
+    # push!(plot_th, C172.th)
+    # push!(plot_p, C172.power)
+    # push!(plot_v, C172.V_air)
+    # push!(plot_al, C172.alpha)
+    # push!(plot_r, total_reward)
+
+    p1 = plot(plot_x, plot_y, title="y v. x", seriestype=:scatter)
+    p2 = plot(plot_x, plot_th, title="th v. x", seriestype=:scatter)
+    p3 = plot(plot_x, plot_p, title="power v. x", seriestype=:scatter)
+    p4 = plot(plot_x, plot_v, title="velocity v. x", seriestype=:scatter)
+    p5 = plot(plot_x, plot_al, title="alpha v. x", seriestype=:scatter)
+    p6 = plot(plot_x, plot_r, title="tot. reward v. x", seriestype=:scatter)
     plot(p1, p2, p3, p4, p5, p6, layout=(3,3), legend=false)
     savefig(outputpath) 
 

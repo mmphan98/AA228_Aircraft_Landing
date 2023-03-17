@@ -1,15 +1,17 @@
 using Distributions
 using Printf
-include("simulator.jl")
-include("state_action_space.jl")
+# include("simulator.jl")
+# include("state_action_space.jl")
 include("data_generation.jl")
 
-for i in 1:9
-    C172 = Airplane(1*x_min/4, 1*y_max/4, 0.07, 40, 50, -0.0525)
-    print(C172)
-    @printf("\n")
+landed_actions = [6,5,1,6,4,9,2,4,5,5,5,1,3,6,8,8,4,1,6,8,8,1,8,3,1,1,1]
+C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
 
-    action = rand((1:9))
+for i in landed_actions
+    # print(C172)
+    # @printf("\n")
+
+    action = i
 
     th, power = action_pitch_power_result(C172, action)
     update_Airplane!(C172, th, power)
@@ -21,6 +23,7 @@ for i in 1:9
     @printf("Action: %d, Reward: %d \n", action, R)
 end
 
+print(C172.landed)
 
 
 #                 x     y                  V_air   alpha

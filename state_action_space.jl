@@ -14,7 +14,7 @@ Definition of state space
 """
 # Constants
 const x_max = 0
-const x_min = -1200
+const x_min = -900
 const x_step = 50
 
 const y_max = 50
