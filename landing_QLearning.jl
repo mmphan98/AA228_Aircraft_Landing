@@ -7,7 +7,8 @@ using Printf
 using CSV
 using DataFrames
 using LinearAlgebra
-# include("data_generation.jl")
+using Statistics
+include("data_generation.jl")
 include("plot_plane_policy.jl")
 
 # include("data_generation_sequential.jl")
@@ -70,29 +71,73 @@ function compute(infile, outfile, space)
     C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C172Model_alpha)
 
     # Iterate with Q-Learning
-    Q_prev = copy(C172Model.Q)
-    Q_new = []
-    delta = Inf # for Bellman Residual
-    iter = 0
-    error = .1
-    while delta > error
+    # Q_prev = copy(C172Model.Q)
+    # Q_new = []
+    # delta = Inf # for Bellman Residual
+    # iter = 0
+    # error = .1
+    # while delta > error
     # while iter < 10
-        @printf("Iteration: %d, Delta: %f\n", iter, delta)
-
+        # @printf("Iteration: %d, Delta: %f\n", iter, delta)
         # Updating model based off data
         for i in 1:length(df.s)
             update!(C172Model, df.s[i], df.a[i], df.r[i], df.sp[i])
+
         end
         #Finding Bellman Residual
         Q_new = copy(C172Model.Q)
-        delta = BRes(Q_new, Q_prev)
-        Q_prev = copy(Q_new)
-        iter = iter + 1
-    end
-    @printf("Iterations with delta = %e: %d \n", error, iter)
+        # delta = BRes(Q_new, Q_prev)
+        # Q_prev = copy(Q_new)
+        # iter = iter + 1
+    # end
+    # @printf("Iterations with delta = %e: %d \n", error, iter)
 
     # Output to .policy file
-    writePolicy(Q_new, outputpath)
+    # writePolicy(Q_new, outputpath)
+end
+
+function plot_policy_reward(infile, outfile, space)
+    inprefix = "data/"
+    outprefix = "plots/policyrewards/"
+    inputpath = string(inprefix, infile)
+    outputpath = string(outprefix, outfile)
+    
+    # Read in CSV file
+    df = CSV.read(inputpath, DataFrame; header = true)
+    rename!(df, [:s, :a, :r, :sp])
+
+    # Define the Q-Learning Model
+    C172Model_S = collect(1:length(space))
+    C172Model_A = collect(1:length(A))
+    C172Model_gamma = 1
+    C172Model_Q = zeros(length(C172Model_S),length(A))
+    C172Model_alpha = 0.3
+    C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C172Model_alpha)
+
+    plot_policy_reward = Vector{Float64}()
+    plot_x = Vector{Float64}()
+    reward_vector = Vector{Float64}()
+
+    # Updating model based off data
+    for i in 1:length(df.s)
+        update!(C172Model, df.s[i], df.a[i], df.r[i], df.sp[i])
+        
+        push!(reward_vector, df.r[i])
+
+        # Calculate total reward returned from a policy obtained every 2000 additional datapoints
+        if i % 2000 == 0
+            avg_reward = mean(reward_vector)
+            empty!(reward_vector)
+            
+
+            push!(plot_x, i)
+            push!(plot_policy_reward, avg_reward)
+            println(i)
+        end
+    end
+    p1 = plot(plot_x, plot_policy_reward, xlabel="No. of Iterations", ylabel="Average Reward",legend=false)
+    
+    savefig(outputpath)
 end
 
 # Defining the function for Q-Learning with epsilon greedy
@@ -105,7 +150,11 @@ function compute_epsilon(C172Model::QLearning, dataset, h, maxIter, outfile)
     C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
 
     for i in 1:20
-        epsilon = (20 - i) * 0.05
+        if (i < 14)
+            epsilon = (14 - i) * 0.06
+        else 
+            epsilon = 0
+        end
         iter = 0
         while !C172.landed && (iter <= maxIter)
 
@@ -147,7 +196,7 @@ end
 
 
 
-const savepath = "data/test_dataset20.csv"
+const savepath = "data/test_dataset21.csv"
 
 """
 Runs an epislon greedy exploration stragety
@@ -163,7 +212,7 @@ C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C1
 dataset = Matrix{Int64}(undef, 0, 4)
 h = 1
 maxIter = 20000
-policy_filename = "landing20.policy";
+policy_filename = "landing21.policy";
 @time compute_epsilon(C172Model, dataset, h, maxIter, policy_filename)
 
 
@@ -183,17 +232,25 @@ Runs an randomized exploration strategy and generates a dataset
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
-# inputfilename = "test_dataset17.csv";
-# outputfilename = "landing17.policy";
-# space = S
+inputfilename = "test_dataset21.csv";
+# outputfilename = "landing20.policy";
+outputfilename = "landing21_test.policy";
+space = S
 # @time compute(inputfilename, outputfilename, space)
 
+"""
+Plot the total reward of policies vs. input datapoints
+"""
+inputfilename = "test_dataset21.csv";
+outputfilename = "rewardplot21.png";
+space = S
+@time plot_policy_reward(inputfilename, outputfilename, space)
 
 """
 UNCOMMENT TO CREATE NEW PLOTS
 
 Run plotting
 """
-inputfilename = "landing20.policy";
-outputfilename = "testplot20.png";
+inputfilename = "landing21.policy";
+outputfilename = "testplot21.png";
 @time plot_policy(inputfilename, outputfilename)
