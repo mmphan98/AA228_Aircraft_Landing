@@ -1,3 +1,7 @@
+"""
+This file defines the state and action spaces for the modeling
+and use of the Q-learning algorithm.
+"""
 include("simulator.jl")
 
 
