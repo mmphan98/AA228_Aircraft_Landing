@@ -3,14 +3,13 @@ include("simulator.jl")
 
 """
 Definition of state space
-    x --> [-4500, 0] m, mapped to bins of 100m [1 ... 46]
-    y --> [0, 300] m, mapped to bins of 30m [1 ... 11] 
-    x,y --> mapped to [1 ... 1911]
+    x --> [-900, 0] m, mapped to bins of 50m
+    y --> [0, 50] m, mapped to bins of 5m
 
     V_air --> [48, 120] knots, [25, 60] m/s mapped to bins of 1 m/s [1, 36]
     alpha --> [-7.5, 4] deg, [-0.13, 0.07] rad mapped to bins of 0.01 rad [1, 21]
 
-    Total size of state space S = 382,536
+    Total size of state space S
 """
 # Constants
 const x_max = 0

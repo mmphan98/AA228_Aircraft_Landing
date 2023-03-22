@@ -64,10 +64,6 @@ function Lcoeff(th)
     th*=180/pi
     return 0.335 + 0.0817*(th) - 2.32*(10^-4)*(th^2) + 3.13*(10^-4)*(th^3) - 1.91*(10^-5)*(th^4)
 end
-# function Lcoeff(th)
-#     th*=180/pi
-#     return 0.136*(th) - 0.0413*(th^2) + 0.01*(th^3) - 1.01*(10^-3)*(th^4) + 4.59*(10^-5)*(th^5) - 7.69*(10^-6)*(th^6)
-# end
 
 """
 Defining a dynamics model via a function that updates the Airplane model

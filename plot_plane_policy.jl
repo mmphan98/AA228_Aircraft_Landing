@@ -6,13 +6,9 @@ the Q-Learning algorithm
 using CSV
 using DataFrames
 using Plots
-include("data_generation.jl")
 
 
 function plot_policy(inputfilename, outputfilename)
-    # inprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\policy\\"
-    # outprefix = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\plots\\"
-    
     inprefix = "policy/"
     outprefix = "plots/"
 
@@ -57,14 +53,7 @@ function plot_policy(inputfilename, outputfilename)
         end
     end
 
-    # push!(plot_x, C172.x)
-    # push!(plot_y, C172.y)
-    # push!(plot_th, C172.th)
-    # push!(plot_p, C172.power)
-    # push!(plot_v, C172.V_air)
-    # push!(plot_al, C172.alpha)
-    # push!(plot_r, total_reward)
-
+    # Plotting in one figure
     p1 = plot(plot_x, plot_y, title="y v. x", seriestype=:scatter)
     p2 = plot(plot_x, plot_th, title="th v. x", seriestype=:scatter)
     p3 = plot(plot_x, plot_p, title="power v. x", seriestype=:scatter)

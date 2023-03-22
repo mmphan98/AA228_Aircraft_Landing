@@ -10,7 +10,6 @@ using DataFrames
 include("state_action_space.jl")
 
 # FOR FILE EXPORT --------------------------------------------------------------------------------------------------change file here
-# const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset12.csv"
 const landing_reward = 5000
 
 """ 
@@ -34,9 +33,6 @@ function calc_Reward(model::Airplane, action)
     # Initiate reward
     reward = 0
 
-    # # Reward for each time step
-    # reward += 20
-
     # Negative reward for each change in pitch or power
     if (action == 1 || action == 3 || action == 7 || action == 9)
         reward -= 20 #pitch/power not same
@@ -50,11 +46,6 @@ function calc_Reward(model::Airplane, action)
         return reward
     end
 
-    # Positive reward for descending
-    # if sin(model.alpha) * model.V_air < 0
-    #     reward += 50
-    # end
-
     # Positive reward for getting closer to the landing zone
     max_distant = sqrt(x_min^2 + y_max^2)
     model_distant = sqrt(model.x^2 + model.y^2)
@@ -63,9 +54,6 @@ function calc_Reward(model::Airplane, action)
     # Negative reward for deviating from optimal alpha
     target_alpha = -0.0525
     reward -= trunc(Int, 60 * abs((target_alpha - model.alpha) / target_alpha))
-    
-    # Positive reward for slowing down
-    # reward += trunc(Int, 2*(V_air_max - (model.V_air - landing_speed)))
 
     # Negative reward for crashing on landing
     if model.x > -2*x_step && model.y < y_step #at landing spot
@@ -189,22 +177,6 @@ Generate random exploration data for Q-Learning
 function explore_dataset(dataset, iter)
 
     for i in 1:iter
-        # if i % 20 == 1
-        #     global x_rand = rand(x_min:0)
-        #     global y_rand = rand(0:y_max)
-        #     global th_rand = rand(th_min*10000:th_max*10000)/10000
-        #     global power_rand = rand(power_min:power_max)
-        #     global V_rand = rand(V_air_min:V_air_max)
-        #     global alpha_rand = rand(alpha_min*100:alpha_max*100)/100
-        # end
-
-        # if i < 100
-        #     C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525)
-        # elseif i < 200
-        #     C172 = Airplane(-x_step+1, y_step-1, 0.10, 20, 32, 0)
-        # else
-        #     C172 = Airplane(x_rand, y_rand, th_rand, power_rand, V_rand, alpha_rand)
-        # end
 
         if i < iter/4
             C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)

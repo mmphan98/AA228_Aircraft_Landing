@@ -11,8 +11,6 @@ using Statistics
 include("data_generation.jl")
 include("plot_plane_policy.jl")
 
-# include("data_generation_sequential.jl")
-
 # Defining a function that writes the policy to the specified file output path
 function writePolicy(Q, path)
     open(path, "w") do io
@@ -59,9 +57,6 @@ function compute(infile, outfile, space)
     df = CSV.read(inputpath, DataFrame; header = true)
     rename!(df, [:s, :a, :r, :sp])
 
-    # Modify the data to include more good trajectories
-    # df =  df[19*Int(trunc(size(df)[1]/20)):end, :]
-
     # Define the Q-Learning Model
     C172Model_S = collect(1:length(space))
     C172Model_A = collect(1:length(A))
@@ -71,29 +66,11 @@ function compute(infile, outfile, space)
     C172Model = QLearning(C172Model_S, C172Model_A, C172Model_gamma, C172Model_Q, C172Model_alpha)
 
     # Iterate with Q-Learning
-    # Q_prev = copy(C172Model.Q)
-    # Q_new = []
-    # delta = Inf # for Bellman Residual
-    # iter = 0
-    # error = .1
-    # while delta > error
-    # while iter < 10
-        # @printf("Iteration: %d, Delta: %f\n", iter, delta)
-        # Updating model based off data
-        for i in 1:length(df.s)
-            update!(C172Model, df.s[i], df.a[i], df.r[i], df.sp[i])
-
-        end
-        #Finding Bellman Residual
-        Q_new = copy(C172Model.Q)
-        # delta = BRes(Q_new, Q_prev)
-        # Q_prev = copy(Q_new)
-        # iter = iter + 1
-    # end
-    # @printf("Iterations with delta = %e: %d \n", error, iter)
-
-    # Output to .policy file
-    # writePolicy(Q_new, outputpath)
+    # Updating model based off data
+    for i in 1:length(df.s)
+        update!(C172Model, df.s[i], df.a[i], df.r[i], df.sp[i])
+    end
+    Q_new = copy(C172Model.Q)
 end
 
 function plot_policy_reward(infile, outfile, space)
@@ -121,15 +98,12 @@ function plot_policy_reward(infile, outfile, space)
     # Updating model based off data
     for i in 1:length(df.s)
         update!(C172Model, df.s[i], df.a[i], df.r[i], df.sp[i])
-        
         push!(reward_vector, df.r[i])
 
         # Calculate total reward returned from a policy obtained every 2000 additional datapoints
         if i % 2000 == 0
             avg_reward = mean(reward_vector)
             empty!(reward_vector)
-            
-
             push!(plot_x, i)
             push!(plot_policy_reward, avg_reward)
             println(i)
@@ -150,11 +124,14 @@ function compute_epsilon(C172Model::QLearning, dataset, h, maxIter, outfile)
     C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
 
     for i in 1:20
+        #Scaling epsilon progressively
         if (i < 14)
             epsilon = (14 - i) * 0.06
         else 
             epsilon = 0
         end
+
+        #Iterate for a given epislon
         iter = 0
         while !C172.landed && (iter <= maxIter)
 
@@ -177,9 +154,7 @@ function compute_epsilon(C172Model::QLearning, dataset, h, maxIter, outfile)
             # Restart simulation if plane simulation faults
             if (!sim_valid(C172))
                 C172 = Airplane(x_min, y_max, 0.11, 150, 33, -0.0525, false)
-                # C172 = Airplane(x_min, y_max, 0.00, 150, 50, -0.0525, false)
-            end
-        
+            end        
             iter += 1
         
         end
@@ -215,28 +190,13 @@ maxIter = 20000
 policy_filename = "landing21.policy";
 @time compute_epsilon(C172Model, dataset, h, maxIter, policy_filename)
 
-
-"""
-Runs an randomized exploration strategy and generates a dataset
-"""
-# dataset = Matrix{Int64}(undef, 0, 4)
-# iter = 50
-# dataset = explore_dataset(dataset, iter)
-
-# # Write dataset to a CSV
-# table = Tables.table(dataset)
-# const savepath = "E:\\Documents\\2023\\Winter 2023\\Decision Making Under Uncertainty\\AA228_Aircraft_Landing\\data\\test_dataset13.csv"
-# CSV.write(savepath, table)
-
-
 """
 Run the Q-Learning algorithm to obtain the optimal policy
 """
 inputfilename = "test_dataset21.csv";
-# outputfilename = "landing20.policy";
 outputfilename = "landing21_test.policy";
 space = S
-# @time compute(inputfilename, outputfilename, space)
+@time compute(inputfilename, outputfilename, space)
 
 """
 Plot the total reward of policies vs. input datapoints
